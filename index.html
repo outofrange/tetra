@@ -4,9 +4,10 @@
     <title>Tetra - Tetris meets Contra</title>
 
     <script src="js/thirdparty/phaser.js"></script>
-    <script src="js/Boot.js"></script>
-    <script src="js/Preloader.js"></script>
-    <script src="js/Menu.js"></script>
+    <script src="js/state/0_Boot.js"></script>
+    <script src="js/state/1_Preloader.js"></script>
+    <script src="js/state/2_Menu.js"></script>
+    <script src="js/state/3a_Arcade.js"></script>
 
     <style>
         body {
@@ -36,6 +37,7 @@
         game.state.add('Boot', tetra.boot);
         game.state.add('Preloader', tetra.preload);
         game.state.add('Menu', tetra.menu);
+        game.state.add('Arcade', tetra.arcade);
 
         game.state.start('Boot');
     }

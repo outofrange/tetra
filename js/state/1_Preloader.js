@@ -1,8 +1,10 @@
 tetra.preload = function () {
-
     this.create = function () {
         console.log("Creating preloader...");
-        //this.preloadBar.cropEnabled = false; //force show the whole thing
+
+        // Adding loading text
+        var text = this.add.text(0, 0, "Loading...", tetra.style.text.heading);
+        text.setTextBounds(0, 100, 800, 100);
 
         // load tiles & map
         this.load.tilemap('map', 'assets/tile/map.json', null, Phaser.Tilemap.TILED_JSON);
@@ -13,12 +15,6 @@ tetra.preload = function () {
         this.load.atlasJSONArray('sprites', 'assets/sprite/tetrasprites.png', 'assets/sprite/tetrasprites.json');
         this.load.spritesheet('explosion_box', 'assets/sprite/explosionbox.png', 32, 32);
         this.load.spritesheet('explosion_big', 'assets/sprite/explosiontetra.png',  70, 64);
-
-        this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloaderBar');
-        this.preloadBar.anchor.setTo(0.5, 0.5);
-        this.load.setPreloadSprite(this.preloadBar);
-        this.titleText = this.add.image(this.world.centerX, this.world.centerY - 220, 'titleimage');
-        this.titleText.anchor.setTo(0.5, 0.5);
     };
 
     this.update = function () {
