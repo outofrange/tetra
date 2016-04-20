@@ -1,5 +1,5 @@
 tetra.preload = function () {
-    this.create = function () {
+    this.preload = function () {
         console.log("Creating preloader...");
 
         // Adding loading text
@@ -12,7 +12,7 @@ tetra.preload = function () {
         this.load.image('tiles', 'assets/tile/kachel.png');
 
         // load sprites
-        this.load.atlasJSONArray('sprites', 'assets/sprite/tetrasprites.png', 'assets/sprite/tetrasprites.json');
+        this.load.atlasJSONHash('sprites', 'assets/sprite/tetrasprites.png', 'assets/sprite/tetrasprites.json');
         this.load.spritesheet('explosion_box', 'assets/sprite/explosionbox.png', 32, 32);
         this.load.spritesheet('explosion_big', 'assets/sprite/explosiontetra.png',  70, 64);
     };
