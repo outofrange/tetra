@@ -1,20 +1,21 @@
-tetra.Character = function (phaserGame) {
+tetra.Character = function (phaserGame, x, y) {
     var game = phaserGame;
+    var that = this;
 
     // add sprites into group to combine legs and body...
     var char = game.add.group(null, 'character', true, true, Phaser.Physics.ARCADE);
 
-    var legsSprite = char.create(0, game.world.height, 'sprites', 'legs_stand');
-    legsSprite.animations.add('walk', ['legs_walk_0', 'legs_walk_1', 'legs_walk_2', 'legs_walk_3', 'legs_walk_4',
+    this.legsSprite = char.create(x, y, 'sprites', 'legs_stand');
+    this.legsSprite.animations.add('walk', ['legs_walk_0', 'legs_walk_1', 'legs_walk_2', 'legs_walk_3', 'legs_walk_4',
         'legs_walk_5', 'legs_walk_4', 'legs_walk_3', 'legs_walk_2', 'legs_walk_1'], 20, true);
-    legsSprite.animations.add('stand', ['legs_stand']);
-    legsSprite.animations.add('jump', ['legs_jump']);
-    legsSprite.anchor.setTo(0.5, 0.5);
-    legsSprite.animations.play('walk');
+    this.legsSprite.animations.add('stand', ['legs_stand']);
+    this.legsSprite.animations.add('jump', ['legs_jump']);
+    this.legsSprite.anchor.setTo(0.5, 1);
+    this.legsSprite.animations.play('walk');
 
     var lookingSprites = ['body_n', 'body_ne', 'body_e', 'body_se', 'body_s'];
-    var bodySprite = char.create(0, game.world.height, 'sprites', lookingSprites[2]);
-    bodySprite.anchor.setTo(0.5, 0.5);
+    this.bodySprite = char.create(x, y - 64, 'sprites', lookingSprites[2]);
+    this.bodySprite.anchor.setTo(0.5, 0.5);
 
     var direction = {
         LEFT: -1,
@@ -39,6 +40,9 @@ tetra.Character = function (phaserGame) {
             }
         },
         velocity: {
+            get x() {
+                return that.legsSprite.body.velocity.x;
+            },
             set y(value) {
                 char.setAll('body.velocity.y', value);
             }
@@ -47,24 +51,15 @@ tetra.Character = function (phaserGame) {
             set x(value) {
                 char.setAll('body.maxVelocity.x', value);
             }
-        },
-        get jumping() {
-            return legsSprite.body.velocity.y < 0;
-        },
-        get falling() {
-            return legsSprite.body.velocity.y > 0;
-        },
-        get standingStill() {
-            return legsSprite.body.velocity.x === 0 && legsSprite.body.velocity.y === 0;
         }
     };
 
     char.setAll('body.collideWorldBounds', true);
     char.setAll('body.drag.x', defaults.drag);
     properties.maxVelocity.x = defaults.maxVelocity;
-
+    
     var moveAndLook = function () {
-        if (game.input.x < legsSprite.x) {
+        if (game.input.x < that.legsSprite.x) {
             properties.lookingDirection = direction.LEFT;
             char.setAll('scale.x', -1);
         } else {
@@ -72,27 +67,37 @@ tetra.Character = function (phaserGame) {
             char.setAll('scale.x', 1);
         }
 
-        // get the positive angle between body and mouse from 0 to 180 degrees
+        // get the positive angle between body and mouse from 0 to 180 degrees, where 0 is top and 180 is at the bottom
+
+        //var pointerAngle = Math.abs(that.bodySprite.position.angle(game.input, true) + 90);
+        var pointerAngle = (that.bodySprite.position.angle(game.input, true) + 360 + 90) % 360;
+        if (pointerAngle > 180) {
+            pointerAngle = 360 - pointerAngle;
+        }
         // this angle is then categorized into 5 segments of the circle, to use the result as sprite index
-        var pointerAngle = Math.abs(bodySprite.position.angle(game.input, true) + 90);
         // we have five frames in our looking direction, starting from looking up, ending with looking down
         var segment = Math.floor(pointerAngle / 180 * 5);
 
-        bodySprite.frameName = lookingSprites[segment];
+        that.bodySprite.frameName = lookingSprites[segment];
 
-        if (game.input.y < bodySprite.y) {
-            bodySprite.animations.play('north');
+        if (game.input.y < that.bodySprite.y) {
+            that.bodySprite.animations.play('north');
         } else {
-            bodySprite.animations.play('south');
+            that.bodySprite.animations.play('south');
         }
 
         // should we go left or right?
         if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
             properties.keypressDirection = direction.LEFT;
+            that.legsSprite.animations.play('walk');
         } else if (game.input.keyboard.isDown(Phaser.Keyboard.D)) {
             properties.keypressDirection = direction.RIGHT;
+            that.legsSprite.animations.play('walk');
         } else {
             properties.keypressDirection = direction.NONE;
+            if (properties.velocity.x === 0) {
+                that.legsSprite.animations.play('stand');
+            }
         }
 
         // use different maxVelocity when going backwards
@@ -106,16 +111,19 @@ tetra.Character = function (phaserGame) {
 
         // jump
         if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-            legsSprite.animations.play('jump');
-            if (legsSprite.body.onFloor()) {
+            if (that.legsSprite.body.onFloor()) {
                 properties.velocity.y = -defaults.jumpVelocity;
+            } else {
+                that.legsSprite.animations.play('jump');
             }
         } else {
-            legsSprite.animations.play('walk');
+            that.legsSprite.animations.play('walk');
         }
     };
 
     this.update = function () {
         moveAndLook();
+
+        game.camera.focusOnXY(that.legsSprite.x, that.legsSprite.y + 200);
     }
 };

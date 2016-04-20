@@ -26,7 +26,7 @@
             background: #ffffff;
             border: 1px solid;
             width: 800px;
-            height: 600px;
+            height: 800px;
         }
     </style>
 </head>
@@ -36,15 +36,17 @@
 </div>
 
 <script type="text/javascript">
+    var g;
+
     window.onload = function () {
-        var game = new Phaser.Game(800, 600, Phaser.AUTO, 'tetraCanvas');
+        g = new Phaser.Game(800, 800, Phaser.AUTO, 'tetraCanvas');
 
-        game.state.add('Boot', tetra.boot);
-        game.state.add('Preloader', tetra.preload);
-        game.state.add('Menu', tetra.menu);
-        game.state.add('Arcade', tetra.arcade);
+        g.state.add('Boot', tetra.boot);
+        g.state.add('Preloader', tetra.preload);
+        g.state.add('Menu', tetra.menu);
+        g.state.add('Arcade', tetra.arcade);
 
-        game.state.start('Boot');
+        g.state.start('Boot');
     }
 </script>
 </body>
