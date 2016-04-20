@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tetra - Tetris meets Contra</title>
+
+    <script src="js/thirdparty/phaser.js"></script>
+    <script src="js/Boot.js"></script>
+    <script src="js/Preloader.js"></script>
+    <script src="js/Menu.js"></script>
+
+    <style>
+        body {
+            background: #dddddd;
+        }
+
+        #tetraCanvas {
+            padding: 10px;
+            margin: 0 auto;
+            display: block;
+            background: #ffffff;
+            border: 1px solid;
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="tetraCanvas">
+</div>
+
+<script type="text/javascript">
+    window.onload = function () {
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, 'tetraCanvas');
+
+        game.state.add('Boot', tetra.boot);
+        game.state.add('Preloader', tetra.preload);
+        game.state.add('Menu', tetra.menu);
+
+        game.state.start('Boot');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+{"frames": [
+
+{
+	"filename": "box/blue.png",
+	"frame": {"x":0,"y":0,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+{
+	"filename": "box/green.png",
+	"frame": {"x":32,"y":0,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+{
+	"filename": "box/red.png",
+	"frame": {"x":0,"y":32,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+{
+	"filename": "box/yellow.png",
+	"frame": {"x":32,"y":32,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+{
+	"filename": "bullet.png",
+	"frame": {"x":0,"y":64,"w":8,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
+	"sourceSize": {"w":8,"h":8}
+},
+{
+	"filename": "tetra/body/east.png",
+	"frame": {"x":0,"y":72,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/body/north.png",
+	"frame": {"x":0,"y":200,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/body/northeast.png",
+	"frame": {"x":0,"y":328,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/body/south.png",
+	"frame": {"x":0,"y":456,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/body/southeast.png",
+	"frame": {"x":0,"y":584,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/jump.png",
+	"frame": {"x":0,"y":712,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/stand.png",
+	"frame": {"x":0,"y":840,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/walk/0.png",
+	"frame": {"x":0,"y":968,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/walk/1.png",
+	"frame": {"x":0,"y":1096,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/walk/2.png",
+	"frame": {"x":0,"y":1224,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/walk/3.png",
+	"frame": {"x":0,"y":1352,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/walk/4.png",
+	"frame": {"x":0,"y":1480,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+{
+	"filename": "tetra/legs/walk/5.png",
+	"frame": {"x":0,"y":1608,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "tetrasprites.png",
+	"format": "RGBA8888",
+	"size": {"w":64,"h":1736},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:7dd6e5be9bb9b9e6472173239cb73baf:d1b6c80738efbfdfe2df5e273d1c7ca3:eccce8604c58466962826ddd2f8c37af$"
+}
+}
