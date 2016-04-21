@@ -34,6 +34,8 @@ tetra.arcade = function () {
     var blocks = [];
     var blockGroups = [];
 
+    var bullets;
+
     this.create = function () {
         var that = this;
 
@@ -65,6 +67,8 @@ tetra.arcade = function () {
         character = new tetra.Character(this, 64, 768);
 
         this.time.events.add(blockGapMaxMs, addBlock, this);
+
+        bullets = this.add.group(null, 'bullets', true, true, Phaser.Physics.ARCADE);
     };
 
 
@@ -86,6 +90,18 @@ tetra.arcade = function () {
         this.physics.arcade.collide(character.bodySprite, layer);
 
         character.update();
+        
+        if (this.input.activePointer.justPressed(200)) {
+            var bullet = bullets.create(character.bodySprite.x, character.bodySprite.y, 'sprites', 'bullet');
+            bullet.anchor.setTo(0.5, 0.5);
+            bullet.body.allowGravity = false;
+
+            var angle = character.bodySprite.position.angle(this.input, true);
+            this.physics.arcade.velocityFromAngle(angle, 1500, bullet.body.velocity);
+
+            console.log(character.bodySprite.position.angle(this.input));
+
+        }
     };
 };
 
