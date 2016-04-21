@@ -7,6 +7,27 @@ tetra.arcade = function () {
     var blockGapMinMs = 250;
     var minReachedAfterMs = 1000 * 60 * 5;
     var gapGradient = (blockGapMaxMs - blockGapMinMs) / (-minReachedAfterMs);
+    var calcBlockGap = function (elapsedMs) {
+        var gapMs = gapGradient * elapsedMs + blockGapMaxMs;
+        if (gapMs < blockGapMinMs) {
+            gapMs = blockGapMinMs;
+        }
+
+        return gapMs;
+    };
+
+    var blockFallingSpeedMin = 200;
+    var blockFallingSpeedMax = 600;
+    var maxSpeedReachedAfterMs = 1000 * 60 * 4;
+    var fallignSpeedGradient = (blockFallingSpeedMax - blockFallingSpeedMin) / (maxSpeedReachedAfterMs);
+    var calcFallingSpeed = function (elapsedMs) {
+        var speed = fallignSpeedGradient * elapsedMs + blockFallingSpeedMin;
+        if (speed > blockFallingSpeedMax) {
+            speed = blockFallingSpeedMax;
+        }
+
+        return speed;
+    };
 
     var addBlock;
 
@@ -19,14 +40,12 @@ tetra.arcade = function () {
         console.log('Creating Arcade level');
 
         addBlock = function () {
-            var newBlock = new tetra.Block(this, 8, 18, 200, layer);
+            var elapsedMs = that.time.events.ms;
+            var newBlock = new tetra.Block(this, 8, 18, calcFallingSpeed(elapsedMs), layer);
             blocks.push(newBlock);
             blockGroups.push(newBlock.blockGroup);
 
-            var delayMs = gapGradient * that.time.events.ms + blockGapMaxMs;
-            if (delayMs < blockGapMinMs) {
-                delayMs = blockGapMinMs;
-            }
+            var delayMs = calcBlockGap(elapsedMs);
 
             that.time.events.add(delayMs, addBlock, that);
         };
