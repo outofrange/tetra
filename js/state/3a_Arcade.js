@@ -52,17 +52,15 @@ tetra.arcade = function () {
 
         this.stage.backgroundColor = '#fff';
 
-        //this.world.setBounds(0, 0, 800, 1280);
         map = this.add.tilemap('map_xl');
         map.addTilesetImage('kachel', 'tiles');
         layer = map.createLayer('Layer 1');
         layer.resizeWorld();
         map.setCollision([0, 1]);
 
-        //this.camera.setBoundsToWorld();
-
         this.physics.startSystem(Phaser.Physics.ARCADE);
         this.physics.arcade.gravity.y = 1500;
+        this.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP;
 
         character = new tetra.Character(this, 64, 768);
 

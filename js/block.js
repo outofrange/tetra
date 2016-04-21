@@ -93,9 +93,21 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
                 blockSprite.body.allowGravity = false;
 
                 blockSprite.body.checkCollision = collisionCheck.falling;
+                blockSprite.body.blocked = {
+                    down: true
+                }
             }
         }
     }
+
+    var nearestValue = function (value, sectionWidth) {
+        var v1 = value % sectionWidth;
+        if (v1 >= sectionWidth / 2) {
+            return value + (sectionWidth - v1);
+        } else {
+            return value - v1;
+        }
+    };
 
     this.stop = function () {
         that.blockGroup.setAll('body.velocity.y', 0);
@@ -103,6 +115,9 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
         that.blockGroup.setAll('body.immovable', true);
         that.falling = false;
 
-        blockSprite.body.immovable = true;
+        for (var i = 0; i < that.blockGroup.length; i++) {
+            var b = that.blockGroup.getAt(i);
+            b.y = nearestValue(b.y, 32);
+        }
     }
 };
