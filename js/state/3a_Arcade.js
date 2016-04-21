@@ -41,6 +41,10 @@ tetra.arcade = function () {
 
         console.log('Creating Arcade level');
 
+        var music = that.sound.add('ozzed_fighter', 1, true);
+        music.loop = true;
+        music.play();
+
         addBlock = function () {
             var elapsedMs = that.time.events.ms;
             var newBlock = new tetra.Block(this, 8, 18, calcFallingSpeed(elapsedMs), layer);
