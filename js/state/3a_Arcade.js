@@ -82,7 +82,7 @@ tetra.arcade = function () {
 
                 that.physics.arcade.collide(block.blockGroup, blockGroups, block.stop);
             }
-        })
+        });
 
         this.physics.arcade.collide(character.legsSprite, layer);
         this.physics.arcade.collide(character.bodySprite, layer);

@@ -64,9 +64,9 @@ var collisionCheck = {
 
 tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
     var that = this;
-    
+
     var game = phaserGame;
-    
+
     var formationMatrix = getRandomBlockRandomRotated();
     var colourFrameName = getRandomArrayElement(colourFrameNames);
 
@@ -74,7 +74,7 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
         width: formationMatrix[0].length,
         height: formationMatrix.length
     };
-    
+
     this.falling = true;
 
     var x = (function () {
@@ -88,7 +88,7 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
     for (var i = 0; i < tiles.height; i++) {
         for (var j = 0; j < tiles.width; j++) {
             if (formationMatrix[i][j] === 1) {
-                var blockSprite = this.blockGroup.create((x + j)*32, (y+i)*32, 'sprites', colourFrameName);
+                var blockSprite = this.blockGroup.create((x + j) * 32, (y + i) * 32, 'sprites', colourFrameName);
                 blockSprite.body.velocity.y = fallingVelocity;
                 blockSprite.body.allowGravity = false;
 
