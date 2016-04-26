@@ -2,8 +2,9 @@ tetra.Character = function (phaserGame, x, y) {
     var game = phaserGame;
     var that = this;
 
+    // TODO using sprite with subsprites would be possible
     // add sprites into group to combine legs and body...
-    var char = game.add.group(null, 'character', true, true, Phaser.Physics.ARCADE);
+    var char = game.add.group(phaserGame.world, 'character', false, true, Phaser.Physics.ARCADE);
 
     this.legsSprite = char.create(x, y, 'sprites', 'legs_stand');
     this.legsSprite.animations.add('walk', ['legs_walk_0', 'legs_walk_1', 'legs_walk_2', 'legs_walk_3', 'legs_walk_4',
@@ -70,7 +71,7 @@ tetra.Character = function (phaserGame, x, y) {
         // get the positive angle between body and mouse from 0 to 180 degrees, where 0 is top and 180 is at the bottom
 
         //var pointerAngle = Math.abs(that.bodySprite.position.angle(game.input, true) + 90);
-        var pointerAngle = (that.bodySprite.position.angle(game.input, true) + 360 + 90) % 360;
+        var pointerAngle = (that.bodySprite.position.angle(worldPosWrapper(game.input), true) + 360 + 90) % 360;
         if (pointerAngle > 180) {
             pointerAngle = 360 - pointerAngle;
         }
@@ -111,7 +112,7 @@ tetra.Character = function (phaserGame, x, y) {
 
         // jump
         if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-            if (that.legsSprite.body.onFloor()) {
+            if (that.legsSprite.body.onFloor() || that.legsSprite.body.touching.down) {
                 properties.velocity.y = -defaults.jumpVelocity;
             } else {
                 that.legsSprite.animations.play('jump');
@@ -123,7 +124,5 @@ tetra.Character = function (phaserGame, x, y) {
 
     this.update = function () {
         moveAndLook();
-
-        game.camera.focusOnXY(that.legsSprite.x, that.legsSprite.y + 200);
     }
 };

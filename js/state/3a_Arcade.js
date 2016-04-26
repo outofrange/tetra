@@ -49,11 +49,12 @@ tetra.arcade = function () {
         var bullet = bullets.getFirstDead(true, character.bodySprite.x, character.bodySprite.y, 'sprites', 'bullet');
         bullet.anchor.setTo(0.5, 0.5);
         bullet.body.allowGravity = false;
+        bullet.checkWorldBounds = true;
         bullet.outOfBoundsKill = true;
 
-        var angle = character.bodySprite.position.angle(this.input, true);
+        var angle = character.bodySprite.position.angle(worldPosWrapper(this.input), true);
         this.physics.arcade.velocityFromAngle(angle, 1500, bullet.body.velocity);
-    }, 200);
+    }, 200, {trailing: false});
 
     this.create = function () {
         var that = this;
@@ -83,15 +84,16 @@ tetra.arcade = function () {
         layer.resizeWorld();
         map.setCollision([0, 1]);
 
+
         this.physics.startSystem(Phaser.Physics.ARCADE);
         this.physics.arcade.gravity.y = 1500;
         this.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP;
 
-        character = new tetra.Character(this, 64, 768);
+        character = new tetra.Character(this, 64, this.world.height - 32);
 
         this.time.events.add(blockGapMaxMs, addBlock, this);
 
-        bullets = this.add.group(null, 'bullets', true, true, Phaser.Physics.ARCADE);
+        bullets = this.add.group(this.world, 'bullets', false, true, Phaser.Physics.ARCADE);
 
         // we have to bind shoot to our Phaserish this, otherwise there are some weird problems...
         // just passing this and accessing all stuff with this.foo doesn't work)
@@ -107,12 +109,14 @@ tetra.arcade = function () {
         text = this.add.text(0, 0, pointsText(), tetra.style.text.gui);
         text.fixedToCamera = true;
         text.cameraOffset = graphics.cameraOffset.clone().add(margin, margin);
+
+        //this.camera.setBoundsToWorld();
+        this.camera.follow(character.legsSprite);
     };
 
     var stopBlock = function (block) {
         block.stop();
         points += block.totalParts() * 100;
-        console.log(points);
     };
 
     this.update = function () {
@@ -137,11 +141,13 @@ tetra.arcade = function () {
         this.physics.arcade.collide(character.legsSprite, layer);
         this.physics.arcade.collide(character.bodySprite, layer);
 
-        bullets.forEachAlive(function (bullet) {
-            that.physics.arcade.collide(bullet, blockGroups, function (bullet, block) {
-                bullet.kill();
-                block.destroy();
-            });
+
+        this.physics.arcade.collide(bullets, layer, function(bullet) {
+            bullet.kill();
+        });
+        this.physics.arcade.collide(bullets, blockGroups, function (bullet, block) {
+            bullet.kill();
+            block.destroy();
         });
 
         // process character updates like movement, ...

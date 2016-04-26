@@ -18,3 +18,14 @@ tetra.style = {
 Phaser.Key.prototype.toString = function () {
     return this.keyCode.toString();
 };
+
+var worldPosWrapper = function (obj) {
+    return {
+        get x() {
+            return obj.worldX;
+        },
+        get y() {
+            return obj.worldY;
+        }
+    }
+};

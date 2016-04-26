@@ -50,14 +50,14 @@ var collisionCheck = {
     falling: {
         up: false,
         down: true,
-        left: false,
-        right: false
+        left: true,
+        right: true
     },
     standing: {
         up: true,
         down: false,
-        left: false,
-        right: false
+        left: true,
+        right: true
     }
 };
 
@@ -84,7 +84,7 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
     })();
     var y = 0;
 
-    this.blockGroup = game.add.group(null, 'block', true, true, Phaser.Physics.ARCADE);
+    this.blockGroup = game.add.group(phaserGame.world, 'block', false, true, Phaser.Physics.ARCADE);
 
     this.totalParts = function () {
         return that.blockGroup.children.length;
@@ -100,7 +100,7 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
                 blockSprite.body.checkCollision = collisionCheck.falling;
                 blockSprite.body.blocked = {
                     down: true
-                }
+                };
             }
         }
     }
