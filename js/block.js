@@ -55,7 +55,7 @@ var collisionCheck = {
     },
     standing: {
         up: true,
-        down: false,
+        down: true,
         left: true,
         right: true
     }
@@ -101,6 +101,7 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
                 blockSprite.body.blocked = {
                     down: true
                 };
+                blockSprite.immovable = true;
             }
         }
     }

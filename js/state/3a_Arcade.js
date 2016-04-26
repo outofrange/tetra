@@ -5,6 +5,8 @@ tetra.arcade = function () {
 
     var TILE_WIDTH = 32;
 
+    var GOAL_AREA;
+
     var blockGapMaxMs = 2000;
     var blockGapMinMs = 250;
     var minReachedAfterMs = 1000 * 60 * 5;
@@ -112,6 +114,10 @@ tetra.arcade = function () {
 
         //this.camera.setBoundsToWorld();
         this.camera.follow(character.legsSprite);
+
+        GOAL_AREA = game.add.sprite(18 * TILE_WIDTH, TILE_WIDTH, null);
+        this.physics.enable(GOAL_AREA, Phaser.Physics.ARCADE);
+        rect.body.setSize(6 * TILE_WIDTH, 6 * TILE_WIDTH);
     };
 
     var stopBlock = function (block) {
@@ -142,11 +148,15 @@ tetra.arcade = function () {
         this.physics.arcade.collide(character.bodySprite, layer);
 
 
-        this.physics.arcade.collide(bullets, layer, function(bullet) {
+        this.physics.arcade.collide(bullets, layer, function (bullet) {
             bullet.kill();
         });
         this.physics.arcade.collide(bullets, blockGroups, function (bullet, block) {
             bullet.kill();
+
+            if (block.body.velocity.y === 0) {
+                points -= 200;
+            }
             block.destroy();
         });
 
@@ -159,6 +169,10 @@ tetra.arcade = function () {
         }
 
         text.text = pointsText();
+
+        this.physics.arcade.overlap(GOAL_AREA, character.bodySprite, function () {
+            console.log('Goal!');
+        });
     };
 };
 
