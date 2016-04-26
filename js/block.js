@@ -115,6 +115,7 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
         that.blockGroup.setAll('body.immovable', true);
         that.falling = false;
 
+        // FIXME doesn't work :(
         for (var i = 0; i < that.blockGroup.length; i++) {
             var b = that.blockGroup.getAt(i);
             b.y = nearestValue(b.y, 32);

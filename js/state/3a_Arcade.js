@@ -36,6 +36,16 @@ tetra.arcade = function () {
 
     var bullets;
 
+    var shoot = _.throttle(function () {
+        var bullet = bullets.getFirstDead(true, character.bodySprite.x, character.bodySprite.y, 'sprites', 'bullet');
+        bullet.anchor.setTo(0.5, 0.5);
+        bullet.body.allowGravity = false;
+        bullet.outOfBoundsKill = true;
+
+        var angle = character.bodySprite.position.angle(this.input, true);
+        this.physics.arcade.velocityFromAngle(angle, 1500, bullet.body.velocity);
+    }, 200);
+
     this.create = function () {
         var that = this;
 
@@ -73,12 +83,16 @@ tetra.arcade = function () {
         this.time.events.add(blockGapMaxMs, addBlock, this);
 
         bullets = this.add.group(null, 'bullets', true, true, Phaser.Physics.ARCADE);
-    };
 
+        // we have to bind shoot to our Phaserish this, otherwise there are some weird problems...
+        // just passing this and accessing all stuff with this.foo doesn't work)
+        shoot = _.bind(shoot, this);
+    };
 
     this.update = function () {
         var that = this;
 
+        // collision checks
         this.physics.arcade.collide(character.legsSprite, blockGroups);
         this.physics.arcade.collide(character.bodySprite, blockGroups);
 
@@ -93,18 +107,19 @@ tetra.arcade = function () {
         this.physics.arcade.collide(character.legsSprite, layer);
         this.physics.arcade.collide(character.bodySprite, layer);
 
+        bullets.forEachAlive(function (bullet) {
+            that.physics.arcade.collide(bullet, blockGroups, function (bullet, block) {
+                bullet.kill();
+                block.kill();
+            });
+        });
+
+        // process character updates like movement, ...
         character.update();
-        
-        if (this.input.activePointer.justPressed(200)) {
-            var bullet = bullets.create(character.bodySprite.x, character.bodySprite.y, 'sprites', 'bullet');
-            bullet.anchor.setTo(0.5, 0.5);
-            bullet.body.allowGravity = false;
 
-            var angle = character.bodySprite.position.angle(this.input, true);
-            this.physics.arcade.velocityFromAngle(angle, 1500, bullet.body.velocity);
-
-            console.log(character.bodySprite.position.angle(this.input));
-
+        // shooting bullets
+        if (this.input.activePointer.leftButton.isDown) {
+            shoot();
         }
     };
 };
