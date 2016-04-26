@@ -85,6 +85,11 @@ tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
     var y = 0;
 
     this.blockGroup = game.add.group(null, 'block', true, true, Phaser.Physics.ARCADE);
+
+    this.totalParts = function () {
+        return that.blockGroup.children.length;
+    };
+
     for (var i = 0; i < tiles.height; i++) {
         for (var j = 0; j < tiles.width; j++) {
             if (formationMatrix[i][j] === 1) {

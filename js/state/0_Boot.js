@@ -10,7 +10,8 @@ tetra.boot = function () {
 
 tetra.style = {
     text: {
-        heading: {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"}
+        heading: {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"},
+        gui: {font: "24px Arial", fill: "#000", boundsAlignH: "center", boundsAlignV: "middle"}
     }
 };
 

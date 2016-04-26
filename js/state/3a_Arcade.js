@@ -3,6 +3,8 @@ tetra.arcade = function () {
     var map = null;
     var layer = null;
 
+    var TILE_WIDTH = 32;
+
     var blockGapMaxMs = 2000;
     var blockGapMinMs = 250;
     var minReachedAfterMs = 1000 * 60 * 5;
@@ -16,12 +18,17 @@ tetra.arcade = function () {
         return gapMs;
     };
 
+    var points = 0;
+    var pointsText = function () {
+        return 'Points: ' + points;
+    };
+
     var blockFallingSpeedMin = 200;
     var blockFallingSpeedMax = 600;
     var maxSpeedReachedAfterMs = 1000 * 60 * 4;
-    var fallignSpeedGradient = (blockFallingSpeedMax - blockFallingSpeedMin) / (maxSpeedReachedAfterMs);
+    var fallingSpeedGradient = (blockFallingSpeedMax - blockFallingSpeedMin) / (maxSpeedReachedAfterMs);
     var calcFallingSpeed = function (elapsedMs) {
-        var speed = fallignSpeedGradient * elapsedMs + blockFallingSpeedMin;
+        var speed = fallingSpeedGradient * elapsedMs + blockFallingSpeedMin;
         if (speed > blockFallingSpeedMax) {
             speed = blockFallingSpeedMax;
         }
@@ -35,6 +42,8 @@ tetra.arcade = function () {
     var blockGroups = [];
 
     var bullets;
+
+    var text;
 
     var shoot = _.throttle(function () {
         var bullet = bullets.getFirstDead(true, character.bodySprite.x, character.bodySprite.y, 'sprites', 'bullet');
@@ -87,6 +96,23 @@ tetra.arcade = function () {
         // we have to bind shoot to our Phaserish this, otherwise there are some weird problems...
         // just passing this and accessing all stuff with this.foo doesn't work)
         shoot = _.bind(shoot, this);
+
+        var margin = 10;
+        var graphics = this.add.graphics(0, 0);
+        graphics.fixedToCamera = true;
+        graphics.cameraOffset = new Phaser.Point(margin, margin + TILE_WIDTH);
+        graphics.beginFill(0xA1A1A1, 0.8);
+        graphics.drawRoundedRect(0, 0, 8 * TILE_WIDTH - 2 * margin, 5 * TILE_WIDTH - 2 * margin, 5);
+
+        text = this.add.text(0, 0, pointsText(), tetra.style.text.gui);
+        text.fixedToCamera = true;
+        text.cameraOffset = graphics.cameraOffset.clone().add(margin, margin);
+    };
+
+    var stopBlock = function (block) {
+        block.stop();
+        points += block.totalParts() * 100;
+        console.log(points);
     };
 
     this.update = function () {
@@ -98,9 +124,13 @@ tetra.arcade = function () {
 
         blocks.forEach(function (block) {
             if (block.falling) {
-                that.physics.arcade.collide(block.blockGroup, layer, block.stop);
+                that.physics.arcade.collide(block.blockGroup, layer, function () {
+                    stopBlock(block)
+                });
 
-                that.physics.arcade.collide(block.blockGroup, blockGroups, block.stop);
+                that.physics.arcade.collide(block.blockGroup, blockGroups, function () {
+                    stopBlock(block)
+                });
             }
         });
 
@@ -110,7 +140,7 @@ tetra.arcade = function () {
         bullets.forEachAlive(function (bullet) {
             that.physics.arcade.collide(bullet, blockGroups, function (bullet, block) {
                 bullet.kill();
-                block.kill();
+                block.destroy();
             });
         });
 
@@ -121,6 +151,8 @@ tetra.arcade = function () {
         if (this.input.activePointer.leftButton.isDown) {
             shoot();
         }
+
+        text.text = pointsText();
     };
 };
 
