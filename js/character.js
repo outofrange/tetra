@@ -1,12 +1,24 @@
 Tetra.Character = function (game, x, y) {
-    var HEIGHT = 128;
-    Phaser.Sprite.call(this, game, x, y + HEIGHT/2, null);
-    var that = this;
+    this.Defaults = new function () {
+        this.MAX_VELOCITY = 400;
+        this.MAX_VELOCITY_BACKWARDS = this.MAX_VELOCITY * 0.25;
+        this.JUMP_VELOCITY = game.physics.arcade.gravity.y / 3.5;
+        this.ACCELERATION = this.MAX_VELOCITY * 3;
+        this.DRAG = this.MAX_VELOCITY * 2;
+        this.SPRITE_HEIGHT = 128;
+        this.CHARACTER_HEIGHT = this.SPRITE_HEIGHT - 8;
+    };
 
-    game.physics.enable(this, Phaser.Physics.ARCADE);
-    var REAL_HEIGHT = HEIGHT - 8;
-    this.body.setSize(64, REAL_HEIGHT, 0, HEIGHT - REAL_HEIGHT);
+    Phaser.Sprite.call(this, game, x, y + this.Defaults.SPRITE_HEIGHT / 2, null);
     this.anchor.setTo(0.5, 0.5);
+
+    // configuring sprite physics
+    game.physics.enable(this, Phaser.Physics.ARCADE);
+    this.body.setSize(64, this.Defaults.CHARACTER_HEIGHT, 0, this.Defaults.SPRITE_HEIGHT - this.Defaults.CHARACTER_HEIGHT);
+    this.body.collideWorldBounds = true;
+    this.body.drag.x = this.Defaults.DRAG;
+    this.body.maxVelocity.x = this.Defaults.MAX_VELOCITY;
+
 
     // adding leg sprite
     var legsSprite = game.make.sprite(0, 0, 'sprites');
@@ -23,86 +35,30 @@ Tetra.Character = function (game, x, y) {
     var bodySprite = game.make.sprite(0, 0, 'sprites', lookingSprites[2]);
     bodySprite.anchor.setTo(0.5, 0.5);
     this.addChild(bodySprite);
-    
-    var direction = {
-        LEFT: -1,
-        NONE: 0,
-        RIGHT: 1
-    };
 
-    var defaults = new function () {
-        this.maxVelocity = 400;
-        this.jumpVelocity = game.physics.arcade.gravity.y / 3.5;
-        this.acceleration = this.maxVelocity * 3;
-        this.maxVelocityBackwards = this.maxVelocity * 0.25;
-        this.drag = this.maxVelocity * 2;
-    };
 
-    var properties = {
-        keypressDirection: direction.NONE,
-        lookingDirection: direction.RIGHT
-    };
-
-    this.body.collideWorldBounds = true;
-    this.body.drag.x = defaults.drag;
-    this.body.maxVelocity.x = defaults.maxVelocity;
-    
-    this.moveAndLook = function () {
-        if (game.input.x < that.x) {
-            properties.lookingDirection = direction.LEFT;
-            that.scale.x = -1;
-        } else {
-            properties.lookingDirection = direction.RIGHT;
-            that.scale.x = 1;
-        }
-
-        // get the positive angle between body and mouse from 0 to 180 degrees, where 0 is top and 180 is at the bottom
-        var pointerAngle = (that.position.angle(worldPosWrapper(game.input), true) + 360 + 90) % 360;
-        if (pointerAngle > 180) {
-            pointerAngle = 360 - pointerAngle;
-        }
-        // this angle is then categorized into 5 segments of the circle, to use the result as sprite index
-        // we have five frames in our looking direction, starting from looking up, ending with looking down
-        var segment = Math.floor(pointerAngle / 180 * 5);
+    // methods to update sprites
+    /**
+     * Chooses correct sprite depending on angle between character and point to look at
+     * @param degrees degrees between 0° (look to top) and 180° (look to bottom)
+     */
+    this.looking = function (degrees) {
+        var segment = Math.floor(degrees / 180 * 5);
 
         bodySprite.frameName = lookingSprites[segment];
+    };
 
-        if (game.input.y < bodySprite.y) {
-            bodySprite.animations.play('north');
-        } else {
-            bodySprite.animations.play('south');
-        }
-
-        // should we go left or right?
-        if (game.input.keyboard.isDown(Phaser.Keyboard.A)) {
-            properties.keypressDirection = direction.LEFT;
-            legsSprite.animations.play('walk');
-        } else if (game.input.keyboard.isDown(Phaser.Keyboard.D)) {
-            properties.keypressDirection = direction.RIGHT;
+    this.walking = function (currentlyWalking) {
+        if (currentlyWalking) {
             legsSprite.animations.play('walk');
         } else {
-            properties.keypressDirection = direction.NONE;
-            if (that.body.velocity.x === 0) {
-                legsSprite.animations.play('stand');
-            }
+            legsSprite.animations.play('stand');
         }
+    };
 
-        // use different maxVelocity when going backwards
-        if (properties.lookingDirection === properties.keypressDirection) {
-            that.body.maxVelocity.x = defaults.maxVelocity;
-        } else if (properties.keypressDirection !== direction.NONE) {
-            that.body.maxVelocity.x = defaults.maxVelocityBackwards;
-        }
-
-        that.body.acceleration.x = defaults.acceleration * properties.keypressDirection;
-
-        // jump
-        if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-            if (that.body.onFloor() || that.body.touching.down) {
-                that.body.velocity.y = -defaults.jumpVelocity;
-            } else {
-                legsSprite.animations.play('jump');
-            }
+    this.jumping = function (currentlyJumping) {
+        if (currentlyJumping) {
+            legsSprite.animations.play('jump');
         } else {
             legsSprite.animations.play('walk');
         }
@@ -112,6 +68,87 @@ Tetra.Character = function (game, x, y) {
 Tetra.Character.prototype = Object.create(Phaser.Sprite.prototype);
 Tetra.Character.prototype.constructor = Tetra.Character;
 
+Tetra.Character.prototype.Direction = {
+    LEFT: -1,
+    NONE: 0,
+    RIGHT: 1
+};
+
+/**
+ * Update sprites according to the mouse pointer in relation to the character.
+ * @returns Tetra.Character.Direction looking direction
+ */
+Tetra.Character.prototype.updateLook = function () {
+    // get the positive angle between body and mouse from 0 to 180 degrees, where 0 is top and 180 is at the bottom
+    var pointerAngle = (this.position.angle(worldPosWrapper(this.game.input), true) + 360 + 90) % 360;
+    if (pointerAngle > 180) {
+        pointerAngle = 360 - pointerAngle;
+    }
+
+    this.looking(pointerAngle);
+
+    var direction;
+    if (this.game.input.x < this.x) {
+        direction = this.Direction.LEFT;
+        this.scale.x = -1;
+    } else {
+        direction = this.Direction.RIGHT;
+        this.scale.x = 1;
+    }
+
+    return direction;
+};
+
+/**
+ * Processes walking related input and updates sprites and velocity accordingly
+ * @returns Tetra.Character.Direction walking direction
+ */
+Tetra.Character.prototype.updateWalk = function () {
+    var direction;
+
+    if (this.game.input.keyboard.isDown(Phaser.Keyboard.A)) {
+        direction = this.Direction.LEFT;
+        this.walking(true);
+    } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.D)) {
+        direction = this.Direction.RIGHT;
+        this.walking(true);
+    } else {
+        direction = this.Direction.NONE;
+        if (this.body.velocity.x === 0) {
+            this.walking(false);
+        }
+    }
+
+    return direction;
+};
+
+/**
+ * Process jump related input and update sprites and velocity accordingly
+ */
+Tetra.Character.prototype.updateJump = function () {
+    if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+        if (this.body.onFloor() || this.body.touching.down) {
+            this.body.velocity.y = -this.Defaults.JUMP_VELOCITY;
+        } else {
+            this.jumping(true);
+        }
+    } else {
+        this.jumping(false);
+    }
+};
+
 Tetra.Character.prototype.update = function () {
-    this.moveAndLook();
+    var lookingDirection = this.updateLook();
+    var walkingDirection = this.updateWalk();
+
+    this.body.acceleration.x = this.Defaults.ACCELERATION * walkingDirection;
+
+    // use different maxVelocity when going backwards
+    if (lookingDirection === walkingDirection) {
+        this.body.maxVelocity.x = this.Defaults.MAX_VELOCITY;
+    } else if (walkingDirection !== this.Direction.NONE) {
+        this.body.maxVelocity.x = this.Defaults.MAX_VELOCITY_BACKWARDS;
+    }
+
+    this.updateJump();
 };
