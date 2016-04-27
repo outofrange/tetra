@@ -1,5 +1,3 @@
-var Tetra = {};
-
 Tetra.boot = function () {
     this.preload = function () {
         console.log("Booting Tetra...");

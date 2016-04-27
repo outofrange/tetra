@@ -1,4 +1,6 @@
 Tetra.arcade = function () {
+    var debug = false;
+
     var character = null;
     var map = null;
     var layer = null;
@@ -40,8 +42,7 @@ Tetra.arcade = function () {
 
     var addBlock;
 
-    var blocks = [];
-    var blockGroups = [];
+    var blocks;
 
     var bullets;
 
@@ -67,11 +68,12 @@ Tetra.arcade = function () {
         music.loop = true;
         music.play();
 
+        blocks = this.add.group(this.world, 'blocks');
+
         addBlock = function () {
             var elapsedMs = that.time.events.ms;
-            var newBlock = new Tetra.Block(this, 8, 18, calcFallingSpeed(elapsedMs), layer);
-            blocks.push(newBlock);
-            blockGroups.push(newBlock.blockGroup);
+            var newBlock = new Tetra.Block(this, blocks, 8, 18, calcFallingSpeed(elapsedMs), layer);
+            blocks.add(newBlock);
 
             var delayMs = calcBlockGap(elapsedMs);
 
@@ -98,7 +100,7 @@ Tetra.arcade = function () {
 
         bullets = this.add.group(this.world, 'bullets', false, true, Phaser.Physics.ARCADE);
 
-        // we have to bind shoot to our Phaserish this, otherwise there are some weird problems...
+        // we have to bind shoot to our Phaserish 'this', otherwise there are some weird problems...
         // just passing this and accessing all stuff with this.foo doesn't work)
         shoot = _.bind(shoot, this);
 
@@ -122,45 +124,55 @@ Tetra.arcade = function () {
     };
 
     var stopBlock = function (block) {
-        block.stop();
-        points += block.totalParts() * 100;
+        // could be called multiple times for a single block formation
+        if (block.falling) {
+            block.stop();
+            points += block.totalParts() * 100;
+        }
     };
 
     this.update = function () {
         var that = this;
 
         // collision checks
-        this.physics.arcade.collide(character, blockGroups);
+        blocks.forEachAlive(function (block) {
+            that.physics.arcade.collide(character, block, function (character) {
+                if (block.falling && character.body.touching.up) {
+                    character.kill();
+                    console.log('DEAD');
+                }
+            });
 
-        blocks.forEach(function (block) {
             if (block.falling) {
-                that.physics.arcade.collide(block.blockGroup, layer, function () {
-                    stopBlock(block)
+                that.physics.arcade.collide(block, layer, function () {
+                    stopBlock(block);
                 });
 
-                that.physics.arcade.collide(block.blockGroup, blockGroups, function () {
-                    stopBlock(block)
+                blocks.forEachAlive(function (otherBlock) {
+                    if (!otherBlock.falling && block !== otherBlock) {
+                        that.physics.arcade.collide(block, otherBlock, function () {
+                            stopBlock(block);
+                        });
+                    }
                 });
             }
+
+            that.physics.arcade.collide(bullets, block, function (bullet, blockPart) {
+                bullet.kill();
+
+                if (blockPart.body.velocity.y === 0) {
+                    points -= 200;
+                }
+                blockPart.destroy();
+            });
         });
 
         this.physics.arcade.collide(character, layer);
 
-
         this.physics.arcade.collide(bullets, layer, function (bullet) {
             bullet.kill();
         });
-        this.physics.arcade.collide(bullets, blockGroups, function (bullet, block) {
-            bullet.kill();
 
-            if (block.body.velocity.y === 0) {
-                points -= 200;
-            }
-            block.destroy();
-        });
-
-        // process character updates like movement, ...
-        //character.update();
 
         // shooting bullets
         if (this.input.activePointer.leftButton.isDown) {
@@ -172,11 +184,23 @@ Tetra.arcade = function () {
         this.physics.arcade.overlap(GOAL_AREA, character, function () {
             console.log('Goal!');
         });
+
+        if (this.input.keyboard.isDown(Phaser.Keyboard.COMMA)) {
+            debug = true;
+        } else if (this.input.keyboard.isDown(Phaser.Keyboard.PERIOD)) {
+            debug = false;
+        }
     };
 
     this.render = function () {
-        g.debug.bodyInfo(character, 32, 32);
-        g.debug.body(character);
+        if (debug) {
+            g.debug.bodyInfo(character, 32, 32);
+            g.debug.body(character);
+
+            blocks.forEachAlive(function (block) {
+                block.debug();
+            })
+        }
     };
 };
 

@@ -1,8 +1,8 @@
 Tetra.Character = function (game, x, y) {
     this.Defaults = new function () {
-        this.MAX_VELOCITY = 400;
-        this.MAX_VELOCITY_BACKWARDS = this.MAX_VELOCITY * 0.25;
-        this.JUMP_VELOCITY = game.physics.arcade.gravity.y / 3.5;
+        this.MAX_VELOCITY = 500;
+        this.MAX_VELOCITY_BACKWARDS = this.MAX_VELOCITY * 0.35;
+        this.JUMP_VELOCITY = game.physics.arcade.gravity.y / 3;
         this.ACCELERATION = this.MAX_VELOCITY * 3;
         this.DRAG = this.MAX_VELOCITY * 2;
         this.SPRITE_HEIGHT = 128;
@@ -14,7 +14,7 @@ Tetra.Character = function (game, x, y) {
 
     // configuring sprite physics
     game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.body.setSize(64, this.Defaults.CHARACTER_HEIGHT, 0, this.Defaults.SPRITE_HEIGHT - this.Defaults.CHARACTER_HEIGHT - 4);
+    this.body.setSize(64, this.Defaults.CHARACTER_HEIGHT, 0, this.Defaults.SPRITE_HEIGHT - this.Defaults.CHARACTER_HEIGHT - 5);
     this.body.collideWorldBounds = true;
     this.body.drag.x = this.Defaults.DRAG;
     this.body.maxVelocity.x = this.Defaults.MAX_VELOCITY;
@@ -49,6 +49,11 @@ Tetra.Character = function (game, x, y) {
             segment = bodyLookingSprites[bodyLookingSprites - 1];
         } else {
             segment = Math.floor(degrees / 180 * 5);
+        }
+
+        if (bodyLookingSprites[segment] == undefined) {
+            console.log(degrees);
+            console.log(segment);
         }
 
         body.frameName = bodyLookingSprites[segment];
