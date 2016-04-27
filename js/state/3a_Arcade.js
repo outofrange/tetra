@@ -1,4 +1,4 @@
-tetra.arcade = function () {
+Tetra.arcade = function () {
     var character = null;
     var map = null;
     var layer = null;
@@ -48,13 +48,13 @@ tetra.arcade = function () {
     var text;
 
     var shoot = _.throttle(function () {
-        var bullet = bullets.getFirstDead(true, character.bodySprite.x, character.bodySprite.y, 'sprites', 'bullet');
+        var bullet = bullets.getFirstDead(true, character.x, character.y, 'sprites', 'bullet');
         bullet.anchor.setTo(0.5, 0.5);
         bullet.body.allowGravity = false;
         bullet.checkWorldBounds = true;
         bullet.outOfBoundsKill = true;
 
-        var angle = character.bodySprite.position.angle(worldPosWrapper(this.input), true);
+        var angle = character.position.angle(worldPosWrapper(this.input), true);
         this.physics.arcade.velocityFromAngle(angle, 1500, bullet.body.velocity);
     }, 200, {trailing: false});
 
@@ -69,7 +69,7 @@ tetra.arcade = function () {
 
         addBlock = function () {
             var elapsedMs = that.time.events.ms;
-            var newBlock = new tetra.Block(this, 8, 18, calcFallingSpeed(elapsedMs), layer);
+            var newBlock = new Tetra.Block(this, 8, 18, calcFallingSpeed(elapsedMs), layer);
             blocks.push(newBlock);
             blockGroups.push(newBlock.blockGroup);
 
@@ -91,7 +91,8 @@ tetra.arcade = function () {
         this.physics.arcade.gravity.y = 1500;
         this.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP;
 
-        character = new tetra.Character(this, 64, this.world.height - 32);
+        character = new Tetra.Character(this, 2 * TILE_WIDTH, this.world.height - 5 * TILE_WIDTH);
+        this.add.existing(character);
 
         this.time.events.add(blockGapMaxMs, addBlock, this);
 
@@ -108,16 +109,16 @@ tetra.arcade = function () {
         graphics.beginFill(0xA1A1A1, 0.8);
         graphics.drawRoundedRect(0, 0, 8 * TILE_WIDTH - 2 * margin, 5 * TILE_WIDTH - 2 * margin, 5);
 
-        text = this.add.text(0, 0, pointsText(), tetra.style.text.gui);
+        text = this.add.text(0, 0, pointsText(), Tetra.style.text.gui);
         text.fixedToCamera = true;
         text.cameraOffset = graphics.cameraOffset.clone().add(margin, margin);
 
         //this.camera.setBoundsToWorld();
-        this.camera.follow(character.legsSprite);
+        this.camera.follow(character);
 
-        GOAL_AREA = game.add.sprite(18 * TILE_WIDTH, TILE_WIDTH, null);
+        GOAL_AREA = this.add.sprite(18 * TILE_WIDTH, TILE_WIDTH, null);
         this.physics.enable(GOAL_AREA, Phaser.Physics.ARCADE);
-        rect.body.setSize(6 * TILE_WIDTH, 6 * TILE_WIDTH);
+        GOAL_AREA.body.setSize(6 * TILE_WIDTH, 6 * TILE_WIDTH);
     };
 
     var stopBlock = function (block) {
@@ -129,8 +130,7 @@ tetra.arcade = function () {
         var that = this;
 
         // collision checks
-        this.physics.arcade.collide(character.legsSprite, blockGroups);
-        this.physics.arcade.collide(character.bodySprite, blockGroups);
+        this.physics.arcade.collide(character, blockGroups);
 
         blocks.forEach(function (block) {
             if (block.falling) {
@@ -144,8 +144,7 @@ tetra.arcade = function () {
             }
         });
 
-        this.physics.arcade.collide(character.legsSprite, layer);
-        this.physics.arcade.collide(character.bodySprite, layer);
+        this.physics.arcade.collide(character, layer);
 
 
         this.physics.arcade.collide(bullets, layer, function (bullet) {
@@ -161,7 +160,7 @@ tetra.arcade = function () {
         });
 
         // process character updates like movement, ...
-        character.update();
+        //character.update();
 
         // shooting bullets
         if (this.input.activePointer.leftButton.isDown) {
@@ -170,9 +169,14 @@ tetra.arcade = function () {
 
         text.text = pointsText();
 
-        this.physics.arcade.overlap(GOAL_AREA, character.bodySprite, function () {
+        this.physics.arcade.overlap(GOAL_AREA, character, function () {
             console.log('Goal!');
         });
+    };
+
+    this.render = function () {
+        g.debug.bodyInfo(character, 32, 32);
+        g.debug.body(character);
     };
 };
 

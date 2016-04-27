@@ -62,7 +62,7 @@ var collisionCheck = {
 };
 
 
-tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
+Tetra.Block = function (phaserGame, startTileX, endTileX, fallingVelocity) {
     var that = this;
 
     var game = phaserGame;

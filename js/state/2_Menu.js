@@ -1,4 +1,4 @@
-tetra.menu = function () {
+Tetra.menu = function () {
     this.create = function () {
         console.log('Creating menu');
     };

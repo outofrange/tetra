@@ -1,9 +1,9 @@
-tetra.preload = function () {
+Tetra.preload = function () {
     this.preload = function () {
         console.log("Creating preloader...");
 
         // Adding loading text
-        var text = this.add.text(0, 0, "Loading...", tetra.style.text.heading);
+        var text = this.add.text(0, 0, "Loading...", Tetra.style.text.heading);
         text.setTextBounds(0, 100, 800, 100);
 
         // load tiles & map
