@@ -1,11 +1,14 @@
 Tetra.Character = function (game, x, y) {
-    Phaser.Sprite.call(this, game, x, y + 128/2, null);
+    var HEIGHT = 128;
+    Phaser.Sprite.call(this, game, x, y + HEIGHT/2, null);
     var that = this;
 
     game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.body.setSize(64, 118, 0, 10);
+    var REAL_HEIGHT = HEIGHT - 8;
+    this.body.setSize(64, REAL_HEIGHT, 0, HEIGHT - REAL_HEIGHT);
     this.anchor.setTo(0.5, 0.5);
 
+    // adding leg sprite
     var legsSprite = game.make.sprite(0, 0, 'sprites');
     legsSprite.animations.add('walk', ['legs_walk_0', 'legs_walk_1', 'legs_walk_2', 'legs_walk_3', 'legs_walk_4',
         'legs_walk_5', 'legs_walk_4', 'legs_walk_3', 'legs_walk_2', 'legs_walk_1'], 20, true);
@@ -13,16 +16,12 @@ Tetra.Character = function (game, x, y) {
     legsSprite.animations.add('jump', ['legs_jump']);
     legsSprite.anchor.setTo(0.5, 0.5);
     legsSprite.animations.play('walk');
-    game.physics.enable(legsSprite, Phaser.Physics.ARCADE);
-    legsSprite.body.allowGravity = false;
     this.addChild(legsSprite);
 
-
+    // adding body sprite
     var lookingSprites = ['body_n', 'body_ne', 'body_e', 'body_se', 'body_s'];
     var bodySprite = game.make.sprite(0, 0, 'sprites', lookingSprites[2]);
     bodySprite.anchor.setTo(0.5, 0.5);
-    game.physics.enable(bodySprite, Phaser.Physics.ARCADE);
-    bodySprite.body.allowGravity = false;
     this.addChild(bodySprite);
     
     var direction = {
@@ -41,49 +40,23 @@ Tetra.Character = function (game, x, y) {
 
     var properties = {
         keypressDirection: direction.NONE,
-        lookingDirection: direction.RIGHT,
-        accelaration: {
-            set x(value) {
-                //char.setAll('body.acceleration.x', value);
-                that.body.acceleration.x = value;
-            }
-        },
-        velocity: {
-            get x() {
-                return that.body.velocity.x;
-            },
-            set y(value) {
-                that.body.velocity.y = value;
-                //char.setAll('body.velocity.y', value);
-            }
-        },
-        maxVelocity: {
-            set x(value) {
-                that.body.maxVelocity.x = value;//('body.maxVelocity.x', value);
-            }
-        }
+        lookingDirection: direction.RIGHT
     };
 
-    //char.setAll('body.collideWorldBounds', true);
     this.body.collideWorldBounds = true;
-    //char.setAll('body.drag.x', defaults.drag);
     this.body.drag.x = defaults.drag;
-    properties.maxVelocity.x = defaults.maxVelocity;
+    this.body.maxVelocity.x = defaults.maxVelocity;
     
     this.moveAndLook = function () {
         if (game.input.x < that.x) {
             properties.lookingDirection = direction.LEFT;
-            //char.setAll('scale.x', -1);
             that.scale.x = -1;
         } else {
             properties.lookingDirection = direction.RIGHT;
             that.scale.x = 1;
-            //char.setAll('scale.x', 1);
         }
 
         // get the positive angle between body and mouse from 0 to 180 degrees, where 0 is top and 180 is at the bottom
-
-        //var pointerAngle = Math.abs(that.bodySprite.position.angle(game.input, true) + 90);
         var pointerAngle = (that.position.angle(worldPosWrapper(game.input), true) + 360 + 90) % 360;
         if (pointerAngle > 180) {
             pointerAngle = 360 - pointerAngle;
@@ -109,19 +82,19 @@ Tetra.Character = function (game, x, y) {
             legsSprite.animations.play('walk');
         } else {
             properties.keypressDirection = direction.NONE;
-            if (properties.velocity.x === 0) {
+            if (that.body.velocity.x === 0) {
                 legsSprite.animations.play('stand');
             }
         }
 
         // use different maxVelocity when going backwards
         if (properties.lookingDirection === properties.keypressDirection) {
-            properties.maxVelocity.x = defaults.maxVelocity;
+            that.body.maxVelocity.x = defaults.maxVelocity;
         } else if (properties.keypressDirection !== direction.NONE) {
-            properties.maxVelocity.x = defaults.maxVelocityBackwards;
+            that.body.maxVelocity.x = defaults.maxVelocityBackwards;
         }
 
-        properties.accelaration.x = defaults.acceleration * properties.keypressDirection;
+        that.body.acceleration.x = defaults.acceleration * properties.keypressDirection;
 
         // jump
         if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
