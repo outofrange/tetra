@@ -1,4 +1,4 @@
-Tetra.Block = function (game, parent, startTileX, endTileX, fallingVelocity) {
+Tetra.Block = function (game, parent, tileRectangle, fallingVelocity) {
     var formation = this.getRandomFormation();
     var colourFrameName = Tetra.Util.getRandomArrayElement(this.ColourSpritesFrames);
 
@@ -7,10 +7,10 @@ Tetra.Block = function (game, parent, startTileX, endTileX, fallingVelocity) {
     
     var x = (function () {
         // calculate tiles from 0 to n, where it's possible to place the block
-        var range = endTileX - startTileX - width + 1;
-        return Math.floor(Math.random() * range + startTileX);
+        var range = tileRectangle.width - width + 1;
+        return Math.floor(Math.random() * range + tileRectangle.left);
     })();
-    var y = 0;
+    var y = tileRectangle.top;
 
     this.falling = true;
 

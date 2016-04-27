@@ -5,11 +5,23 @@ Tetra.arcade = function () {
     var map = null;
     var layer = null;
 
-    var TILE_WIDTH = 32;
+    var levelInfo = {
+        tileWidth: 32,
+        blockArea: {
+            tiles: new Phaser.Rectangle(8, 0, 10, 39),
+        }
+    };
+    levelInfo.blockArea.coord = (function () {
+        var r = levelInfo.blockArea.tiles;
+        var w = levelInfo.tileWidth;
+        new Phaser.Rectangle(r.x * w, r.y * w, r.width * w, r.height * w);
+    })();
 
     var GOAL_AREA;
 
-    var blockGapMaxMs = 2000;
+    var playingField;
+
+    var blockGapMaxMs = 4000;
     var blockGapMinMs = 250;
     var minReachedAfterMs = 1000 * 60 * 5;
     var gapGradient = (blockGapMaxMs - blockGapMinMs) / (-minReachedAfterMs);
@@ -27,7 +39,7 @@ Tetra.arcade = function () {
         return 'Points: ' + points;
     };
 
-    var blockFallingSpeedMin = 200;
+    var blockFallingSpeedMin = 100;
     var blockFallingSpeedMax = 600;
     var maxSpeedReachedAfterMs = 1000 * 60 * 4;
     var fallingSpeedGradient = (blockFallingSpeedMax - blockFallingSpeedMin) / (maxSpeedReachedAfterMs);
@@ -40,13 +52,7 @@ Tetra.arcade = function () {
         return speed;
     };
 
-    var addBlock;
-
-    var blocks;
-
-    var bullets;
-
-    var text;
+    var addBlock, blocks, bullets, text;
 
     var shoot = _.throttle(function () {
         var bullet = bullets.getFirstDead(true, character.x, character.y, 'sprites', 'bullet');
@@ -63,6 +69,8 @@ Tetra.arcade = function () {
         var that = this;
 
         console.log('Creating Arcade level');
+        
+        playingField = new Tetra.Field(8, 0, 10, 39, 32);
 
         var music = that.sound.add('ozzed_fighter', 1, true);
         music.loop = true;
@@ -72,7 +80,7 @@ Tetra.arcade = function () {
 
         addBlock = function () {
             var elapsedMs = that.time.events.ms;
-            var newBlock = new Tetra.Block(this, blocks, 8, 18, calcFallingSpeed(elapsedMs), layer);
+            var newBlock = new Tetra.Block(this, blocks, levelInfo.blockArea.tiles, calcFallingSpeed(elapsedMs), layer);
             blocks.add(newBlock);
 
             var delayMs = calcBlockGap(elapsedMs);
@@ -93,7 +101,7 @@ Tetra.arcade = function () {
         this.physics.arcade.gravity.y = 1500;
         this.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP;
 
-        character = new Tetra.Character(this, 2 * TILE_WIDTH, this.world.height - 5 * TILE_WIDTH);
+        character = new Tetra.Character(this, 2 * levelInfo.tileWidth, this.world.height - 5 * levelInfo.tileWidth);
         this.add.existing(character);
 
         this.time.events.add(blockGapMaxMs, addBlock, this);
@@ -107,9 +115,9 @@ Tetra.arcade = function () {
         var margin = 10;
         var graphics = this.add.graphics(0, 0);
         graphics.fixedToCamera = true;
-        graphics.cameraOffset = new Phaser.Point(margin, margin + TILE_WIDTH);
+        graphics.cameraOffset = new Phaser.Point(margin, margin + levelInfo.tileWidth);
         graphics.beginFill(0xA1A1A1, 0.8);
-        graphics.drawRoundedRect(0, 0, 8 * TILE_WIDTH - 2 * margin, 5 * TILE_WIDTH - 2 * margin, 5);
+        graphics.drawRoundedRect(0, 0, 8 * levelInfo.tileWidth - 2 * margin, 5 * levelInfo.tileWidth - 2 * margin, 5);
 
         text = this.add.text(0, 0, pointsText(), Tetra.style.text.gui);
         text.fixedToCamera = true;
@@ -118,9 +126,9 @@ Tetra.arcade = function () {
         //this.camera.setBoundsToWorld();
         this.camera.follow(character);
 
-        GOAL_AREA = this.add.sprite(18 * TILE_WIDTH, TILE_WIDTH, null);
+        GOAL_AREA = this.add.sprite(18 * levelInfo.tileWidth, levelInfo.tileWidth, null);
         this.physics.enable(GOAL_AREA, Phaser.Physics.ARCADE);
-        GOAL_AREA.body.setSize(6 * TILE_WIDTH, 6 * TILE_WIDTH);
+        GOAL_AREA.body.setSize(6 * levelInfo.tileWidth, 6 * levelInfo.tileWidth);
     };
 
     var stopBlock = function (block) {
@@ -128,6 +136,10 @@ Tetra.arcade = function () {
         if (block.falling) {
             block.stop();
             points += block.totalParts() * 100;
+            
+            // adding all block parts to field
+            var removedRows = playingField.add(block.children);
+            points += removedRows * 5000;
         }
     };
 
@@ -159,6 +171,8 @@ Tetra.arcade = function () {
 
             that.physics.arcade.collide(bullets, block, function (bullet, blockPart) {
                 bullet.kill();
+
+                playingField.remove(blockPart);
 
                 if (blockPart.body.velocity.y === 0) {
                     points -= 200;

@@ -1,3 +1,7 @@
+var pick = function (arg, def) {
+    return typeof arg == 'undefined' ? def : arg;
+};
+
 Tetra = {};
 Tetra.Util = {};
 
@@ -37,4 +41,19 @@ Tetra.Util.snapToGrid = function (value, gridSize) {
     } else {
         return value - v1;
     }
+};
+
+Tetra.Util.initArray = function (rows, columns) {
+    columns = pick(columns, 0);
+    var arr = [];
+
+    for (var i = 0; i < rows; i++) {
+        if (columns > 0) {
+            arr[i] = Tetra.Util.initArray(columns);
+        } else {
+            arr[i] = undefined;
+        }
+    }
+
+    return arr;
 };
