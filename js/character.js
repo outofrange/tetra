@@ -6,7 +6,7 @@ Tetra.Character = function (game, x, y) {
         this.ACCELERATION = this.MAX_VELOCITY * 3;
         this.DRAG = this.MAX_VELOCITY * 2;
         this.SPRITE_HEIGHT = 128;
-        this.CHARACTER_HEIGHT = this.SPRITE_HEIGHT - 8;
+        this.CHARACTER_HEIGHT = this.SPRITE_HEIGHT - 10;
     };
 
     Phaser.Sprite.call(this, game, x, y + this.Defaults.SPRITE_HEIGHT / 2, null);
@@ -14,27 +14,27 @@ Tetra.Character = function (game, x, y) {
 
     // configuring sprite physics
     game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.body.setSize(64, this.Defaults.CHARACTER_HEIGHT, 0, this.Defaults.SPRITE_HEIGHT - this.Defaults.CHARACTER_HEIGHT);
+    this.body.setSize(64, this.Defaults.CHARACTER_HEIGHT, 0, this.Defaults.SPRITE_HEIGHT - this.Defaults.CHARACTER_HEIGHT - 4);
     this.body.collideWorldBounds = true;
     this.body.drag.x = this.Defaults.DRAG;
     this.body.maxVelocity.x = this.Defaults.MAX_VELOCITY;
 
 
     // adding leg sprite
-    var legsSprite = game.make.sprite(0, 0, 'sprites');
-    legsSprite.animations.add('walk', ['legs_walk_0', 'legs_walk_1', 'legs_walk_2', 'legs_walk_3', 'legs_walk_4',
+    var legs = game.make.sprite(0, 0, 'sprites');
+    legs.animations.add('walk', ['legs_walk_0', 'legs_walk_1', 'legs_walk_2', 'legs_walk_3', 'legs_walk_4',
         'legs_walk_5', 'legs_walk_4', 'legs_walk_3', 'legs_walk_2', 'legs_walk_1'], 20, true);
-    legsSprite.animations.add('stand', ['legs_stand']);
-    legsSprite.animations.add('jump', ['legs_jump']);
-    legsSprite.anchor.setTo(0.5, 0.5);
-    legsSprite.animations.play('walk');
-    this.addChild(legsSprite);
+    legs.animations.add('stand', ['legs_stand']);
+    legs.animations.add('jump', ['legs_jump']);
+    legs.anchor.setTo(0.5, 0.5);
+    legs.animations.play('walk');
+    this.addChild(legs);
 
     // adding body sprite
-    var lookingSprites = ['body_n', 'body_ne', 'body_e', 'body_se', 'body_s'];
-    var bodySprite = game.make.sprite(0, 0, 'sprites', lookingSprites[2]);
-    bodySprite.anchor.setTo(0.5, 0.5);
-    this.addChild(bodySprite);
+    var bodyLookingSprites = ['body_n', 'body_ne', 'body_e', 'body_se', 'body_s'];
+    var body = game.make.sprite(0, 0, 'sprites', bodyLookingSprites[2]);
+    body.anchor.setTo(0.5, 0.5);
+    this.addChild(body);
 
 
     // methods to update sprites
@@ -43,24 +43,30 @@ Tetra.Character = function (game, x, y) {
      * @param degrees degrees between 0° (look to top) and 180° (look to bottom)
      */
     this.looking = function (degrees) {
-        var segment = Math.floor(degrees / 180 * 5);
+        var segment;
+        if (degrees == 180) {
+            // we have to process 180 separately, to be able to use the segment as an index
+            segment = bodyLookingSprites[bodyLookingSprites - 1];
+        } else {
+            segment = Math.floor(degrees / 180 * 5);
+        }
 
-        bodySprite.frameName = lookingSprites[segment];
+        body.frameName = bodyLookingSprites[segment];
     };
 
     this.walking = function (currentlyWalking) {
         if (currentlyWalking) {
-            legsSprite.animations.play('walk');
+            legs.animations.play('walk');
         } else {
-            legsSprite.animations.play('stand');
+            legs.animations.play('stand');
         }
     };
 
     this.jumping = function (currentlyJumping) {
         if (currentlyJumping) {
-            legsSprite.animations.play('jump');
+            legs.animations.play('jump');
         } else {
-            legsSprite.animations.play('walk');
+            legs.animations.play('walk');
         }
     };
 };
@@ -68,6 +74,10 @@ Tetra.Character = function (game, x, y) {
 Tetra.Character.prototype = Object.create(Phaser.Sprite.prototype);
 Tetra.Character.prototype.constructor = Tetra.Character;
 
+/**
+ * Enumeration to represent a direction
+ * @type {{LEFT: number, NONE: number, RIGHT: number}}
+ */
 Tetra.Character.prototype.Direction = {
     LEFT: -1,
     NONE: 0,
