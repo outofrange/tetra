@@ -2,7 +2,7 @@ Tetra.highscore = function () {
     var that = this;
     var currentScore;
 
-    var highscoreBaseUrl = 'https://outofrange.org/games';
+    var highscoreBaseUrl = 'https://www.outofrange.org/tetra';
 
     var style = Tetra.style.text.highscore;
     var rowHeight = 32;
