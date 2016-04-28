@@ -12,7 +12,9 @@
     <script src="js/state/0_Boot.js"></script>
     <script src="js/state/1_Preloader.js"></script>
     <script src="js/state/2_Menu.js"></script>
+    <script src="js/state/3_MainGameProto.js"></script>
     <script src="js/state/3a_Arcade.js"></script>
+    <script src="js/state/3b_Iterative.js"></script>
     <script src="js/state/4_Highscore.js"></script>
 
     <script src="js/field.js"></script>
@@ -63,6 +65,7 @@
         g.state.add('Preloader', Tetra.preload);
         g.state.add('Menu', Tetra.menu);
         g.state.add('Arcade', Tetra.arcade);
+        g.state.add('Iterative', Tetra.Iterative);
         g.state.add('Highscore', Tetra.highscore);
 
         g.state.start('Boot');

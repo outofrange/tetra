@@ -56,6 +56,18 @@ Tetra.Player = {
     }
 };
 
+/*Tetra.Arcade.Player = {
+    name: pick(localStorage.getItem('playerName'), 'anonymous'),
+    _points: 0,
+    set points(value) {
+        Tetra.Player.arcade._points = value >= 0 ? value : 0;
+    },
+    get points() {
+        return Tetra.Player.arcade._points;
+    }
+};*/
+
+
 Tetra.Util = {};
 
 /**
@@ -123,7 +135,7 @@ Tetra.Util.snapToGrid = function (value, gridSize) {
  * @param {int} rows number of rows the array should have
  * @param {int} [columns] number of columns each row should have
  * @returns {Array} an empty array
- * 
+ *
  * initArray(3) -> [undefined, undefined, undefined]
  * initArray(3, 2) -> [[undefined, undefined], [undefined, undefined], [undefined, undefined]]
  */

@@ -29,7 +29,6 @@ Tetra.Button = function (game, x, y, width, height, text, style) {
     var textObj = this.game.make.text(0, 0, text, style.buttonText);
     textObj.setTextBounds(0, 0, width, height);
 
-
     this.addChild(textObj);
     //this.anchor.setTo(0.5, 0.5);
 

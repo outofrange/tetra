@@ -28,7 +28,7 @@ Tetra.menu = function () {
         incrementalModeBtn.setOnClick(function () {
             Tetra.Player.name = getNameAndHide();
 
-            this.state.start('Arcade');
+            this.state.start('Iterative');
         }, this);
         this.add.existing(incrementalModeBtn);
 
