@@ -72,7 +72,7 @@ Tetra.Game.prototype.pointsText = function () {
 
 Tetra.Game.prototype.gameOver = function () {
     this.music.stop();
-    this.state.start('Highscore', true, false, !debug ? this.player.points : 0);
+    this.state.start('Highscore', true, false, !this.debug ? this.player.points : 0);
 };
 
 Tetra.Game.prototype.shoot = _.throttle(function () {
