@@ -8,6 +8,6 @@ $highscore = array();
 while($r = mysqli_fetch_assoc($result)) {
     $highscore[] = $r;
 }
-print json_encode($highscore);
+print json_encode($highscore, JSON_NUMERIC_CHECK);
 
 $conn->close();

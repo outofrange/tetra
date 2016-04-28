@@ -74,6 +74,8 @@ Tetra.arcade = function () {
     this.create = function () {
         var that = this;
 
+        points = 0;
+
         console.log('Creating Arcade level');
         
         playingField = new Tetra.Field(8, 0, 10, 39, 32);
@@ -211,6 +213,8 @@ Tetra.arcade = function () {
             debug = true;
         } else if (this.input.keyboard.isDown(Phaser.Keyboard.PERIOD)) {
             debug = false;
+        } else if (this.input.keyboard.isDown(Phaser.Keyboard.M)) {
+            this.gameover();
         }
     };
 

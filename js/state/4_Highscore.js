@@ -84,11 +84,13 @@ Tetra.highscore = function () {
             .then(function(xhr, response) {
                 console.log('Received response:');
                 console.log(response);
+
                 var highscore = processHighscore('You', currentScore, function () {
+                    console.log(JSON.parse(response));
                     return JSON.parse(response);
                 }, sendToGlobalHighscore, 6);
 
-                that.createTable(10, 10, this.game.width - 10, highscore, 'Global highscore');
+                that.createTable(10, 10, that.game.width - 10, highscore, 'Global highscore');
             });
     };
 
@@ -96,7 +98,7 @@ Tetra.highscore = function () {
         this.world.setBounds(0, 0, 800, 800);
         this.stage.backgroundColor = '#000';
 
-        requestGlobalHighscore()
+        requestGlobalHighscore();
 
         var local = processHighscore('You', currentScore, getLocalHighscore, _.flip(saveLocalHighscore), 4);
         this.createTable(10, this.game.height / 2 + 10, this.game.width - 10, local, 'Local highscore');
