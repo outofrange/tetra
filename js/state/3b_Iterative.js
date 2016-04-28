@@ -8,12 +8,6 @@ Tetra.Iterative = function () {
 Tetra.Iterative.prototype = Object.create(Tetra.Game.prototype);
 Tetra.Iterative.prototype.constructor = Tetra.Game;
 
-Tetra.Iterative.prototype._create = Tetra.Iterative.prototype.create;
-Tetra.Iterative.prototype.create = function () {
-    this._create();
-    console.log("lolz");
-};
-
 Tetra.Iterative.Player = {
     name: getPlayerName(),
     _points: 0,
