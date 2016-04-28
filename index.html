@@ -51,23 +51,21 @@
 </head>
 
 <body>
-<div id="tetraCanvas"><input id="playerName" placeholder="anonymous" class="hidden">
+<div id="tetraCanvas">
+    <input id="playerName" class="hidden" placeholder="anonymous">
 </div>
 
 
 <script type="text/javascript">
-    // keeping g in the global scope makes debugging a bit easier, but it will be removed soon
-    var g;
-
     window.onload = function () {
-        g = new Phaser.Game(800, 800, Phaser.AUTO, 'tetraCanvas');
+        var g = new Phaser.Game(800, 800, Phaser.AUTO, 'tetraCanvas');
 
-        g.state.add('Boot', Tetra.boot);
-        g.state.add('Preloader', Tetra.preload);
-        g.state.add('Menu', Tetra.menu);
+        g.state.add('Boot', Tetra.Boot);
+        g.state.add('Preloader', Tetra.Preload);
+        g.state.add('Menu', Tetra.Menu);
         g.state.add('Arcade', Tetra.Arcade);
         g.state.add('Iterative', Tetra.Iterative);
-        g.state.add('Highscore', Tetra.highscore);
+        g.state.add('Highscore', Tetra.Highscore);
         g.state.add('Upgrade', Tetra.Upgrade);
 
         g.state.start('Boot');

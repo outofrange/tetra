@@ -1,4 +1,4 @@
-Tetra.highscore = function () {
+Tetra.Highscore = function () {
     var that = this;
     var currentScore;
 

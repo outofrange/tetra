@@ -1,4 +1,4 @@
-Tetra.menu = function () {
+Tetra.Menu = function () {
     var margin = 15;
 
     this.create = function () {

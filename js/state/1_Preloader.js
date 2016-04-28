@@ -1,4 +1,4 @@
-Tetra.preload = function () {
+Tetra.Preload = function () {
     this.preload = function () {
         console.log("Creating preloader...");
 

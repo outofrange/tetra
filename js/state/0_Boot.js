@@ -1,4 +1,4 @@
-Tetra.boot = function () {
+Tetra.Boot = function () {
     this.preload = function () {
         console.log('Booting Tetra...');
 
