@@ -8,7 +8,7 @@ Tetra.arcade = function () {
     var levelInfo = {
         tileWidth: 32,
         blockArea: {
-            tiles: new Phaser.Rectangle(8, 0, 10, 39),
+            tiles: new Phaser.Rectangle(8, 0, 10, 39)
         }
     };
     levelInfo.blockArea.coord = (function () {
@@ -52,7 +52,13 @@ Tetra.arcade = function () {
         return speed;
     };
 
-    var addBlock, blocks, bullets, text;
+    var addBlock, blocks, bullets, text, music;
+
+    this.gameover = function () {
+        console.log('DEAD');
+        music.stop();
+        this.state.start('Highscore', true, false, points);
+    };
 
     var shoot = _.throttle(function () {
         var bullet = bullets.getFirstDead(true, character.x, character.y, 'sprites', 'bullet');
@@ -72,7 +78,7 @@ Tetra.arcade = function () {
         
         playingField = new Tetra.Field(8, 0, 10, 39, 32);
 
-        var music = that.sound.add('ozzed_fighter', 1, true);
+        music = that.sound.add('ozzed_fighter', 1, true);
         music.loop = true;
         music.play();
 
@@ -151,7 +157,8 @@ Tetra.arcade = function () {
             that.physics.arcade.collide(character, block, function (character) {
                 if (block.falling && character.body.touching.up) {
                     character.kill();
-                    console.log('DEAD');
+
+                    that.gameover();
                 }
             });
 
@@ -197,6 +204,7 @@ Tetra.arcade = function () {
 
         this.physics.arcade.overlap(GOAL_AREA, character, function () {
             console.log('Goal!');
+            that.gameover();
         });
 
         if (this.input.keyboard.isDown(Phaser.Keyboard.COMMA)) {

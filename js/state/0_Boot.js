@@ -9,7 +9,12 @@ Tetra.boot = function () {
 Tetra.style = {
     text: {
         heading: {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"},
-        gui: {font: "24px Arial", fill: "#000", boundsAlignH: "center", boundsAlignV: "middle"}
+        highscore: {
+            name: {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"},
+            score: {font: "bold 32px Arial", fill: "#fff", boundsAlignH: "right", boundsAlignV: "middle"}
+        },
+        gui: {font: "24px Arial", fill: "#000", boundsAlignH: "center", boundsAlignV: "middle"},
+        button: {font: "24px Arial", fill: "#000", boundsAlignH: "center", boundsAlignV: "middle"}
     }
 };
 

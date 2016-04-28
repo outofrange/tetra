@@ -13,10 +13,12 @@
     <script src="js/state/1_Preloader.js"></script>
     <script src="js/state/2_Menu.js"></script>
     <script src="js/state/3a_Arcade.js"></script>
+    <script src="js/state/4_Highscore.js"></script>
 
     <script src="js/field.js"></script>
     <script src="js/character.js"></script>
     <script src="js/block.js"></script>
+    <script src="js/button.js"></script>
 
     <style>
         body {
@@ -40,6 +42,7 @@
 </div>
 
 <script type="text/javascript">
+    // keeping g in the global scope makes debugging a bit easier, but it will be removed soon
     var g;
 
     window.onload = function () {
@@ -49,6 +52,7 @@
         g.state.add('Preloader', Tetra.preload);
         g.state.add('Menu', Tetra.menu);
         g.state.add('Arcade', Tetra.arcade);
+        g.state.add('Highscore', Tetra.highscore);
 
         g.state.start('Boot');
     }
