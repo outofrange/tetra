@@ -8,4 +8,8 @@ Tetra.Upgrade = function () {
     this.create = function () {
         // build gui
     };
+    
+    this.save = function () {
+        localStorage.setItem('iterative.player.data', JSON.stringify(player));
+    };
 };

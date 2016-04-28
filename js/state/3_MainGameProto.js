@@ -91,10 +91,8 @@ Tetra.Game.prototype.shoot = _.throttle(function () {
 Tetra.Game.prototype.create = function () {
     var that = this;
 
-    this.player.points = 0;
-
     console.log('Creating level');
-    console.log('Name: ' + this.player.name);
+    console.log('Name: ' + this.player.data.name);
 
     this.music = this.sound.add('ozzed_fighter', 1, true);
     this.music.loop = true;
@@ -163,7 +161,7 @@ Tetra.Game.prototype.stopBlock = function (block) {
 
         // adding all block parts to field
         var removedRows = this.field.add(block.children);
-        this.player.points += removedRows * that.config.points.completedRow;
+        this.player.points += removedRows * this.config.points.completedRow;
     }
 };
 

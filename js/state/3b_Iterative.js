@@ -1,6 +1,7 @@
 Tetra.Iterative = function () {
-    var field = new Tetra.Field(8, 0, 10, 39, 'map');
+    var field = new Tetra.Field(8, 0, 10, 20, 'map');
     var config = new Tetra.Game.DefaultConfig();
+    config.goal = new Phaser.Rectangle(18 * field.tileSize, field.tileSize, 6 * field.tileSize, 4 * field.tileSize);
 
     Tetra.Game.call(this, field, Tetra.Iterative.getPlayer(), config);
 
@@ -14,22 +15,25 @@ Tetra.Iterative.prototype = Object.create(Tetra.Game.prototype);
 Tetra.Iterative.prototype.constructor = Tetra.Game;
 
 Tetra.Iterative.getPlayer = function () {
-    var player = localStorage.getItem('iterative.player');
-
-    if (player) {
-        return JSON.parse(player);
-    } else {
-        return Tetra.Iterative.Player;
+    var playerData = localStorage.getItem('iterative.player.data');
+    var player = new Tetra.Iterative.Player();
+    
+    if (playerData) {
+        player.data = JSON.parse(playerData);
     }
+    
+    return player;
 };
 
 Tetra.Iterative.Player = {
-    name: getPlayerName(),
-    _points: 0,
+    data: {
+        name: getPlayerName(),
+        _points: 0
+    },    
     set points(value) {
-        Tetra.Iterative.Player._points = value >= 0 ? value : 0;
+        this._points = value >= 0 ? value : 0;
     },
     get points() {
-        return Tetra.Iterative.Player._points;
+        return this._points;
     }
 };
