@@ -15,8 +15,6 @@ Tetra.Game = function (field, player, worldConfig) {
     this.goalArea = null;
     this.text = null;
 
-    this.addBlock = null;
-
     this.nextScreen = null;
 };
 Tetra.Game.prototype = Object.create(Phaser.State.prototype);
@@ -76,15 +74,26 @@ Tetra.Game.DefaultConfig = function () {
     };
 };
 
+/**
+ * Calculates text to show as points
+ * @returns {string} points string
+ */
 Tetra.Game.prototype.pointsText = function () {
     return 'Points: ' + this.player.points;
 };
 
+/**
+ * stops music and calls this.nextScreen()
+ */
 Tetra.Game.prototype.gameOver = function () {
     this.music.stop();
     this.nextScreen();
 };
 
+/**
+ * Can be called every 200ms to create a bullet to mouse pointer
+ * @type {Function}
+ */
 Tetra.Game.prototype.shoot = _.throttle(function () {
     var bullet = this.bullets.getFirstDead(true, this.character.x, this.character.y, 'sprites', 'bullet');
     bullet.anchor.setTo(0.5, 0.5);
@@ -96,9 +105,17 @@ Tetra.Game.prototype.shoot = _.throttle(function () {
     this.physics.arcade.velocityFromAngle(angle, this.config.shootingSpeed(), bullet.body.velocity);
 }, 200, {trailing: false});
 
-Tetra.Game.prototype.create = function () {
-    var that = this;
+Tetra.Game.prototype.addBlock = function () {
+    var elapsedMs = this.time.events.ms;
+    var newBlock = new Tetra.Block(this, this.blocks, this.field.tileRectangle, this.config.fallingSpeed(elapsedMs), this.layer);
+    this.blocks.add(newBlock);
 
+    var delayMs = this.config.msBetweenBlocks(elapsedMs);
+
+    this.time.events.add(delayMs, this.addBlock, this);
+};
+
+Tetra.Game.prototype.create = function () {
     console.log('Creating level');
     console.log('Player: ');
     console.log(this.player);
@@ -109,17 +126,6 @@ Tetra.Game.prototype.create = function () {
 
     this.blocks = this.add.group(this.world, 'blocks');
 
-    // GEN
-    this.addBlock = function () {
-        var elapsedMs = that.time.events.ms;
-        var newBlock = new Tetra.Block(this, this.blocks, this.field.tileRectangle,
-            this.config.fallingSpeed(elapsedMs), this.layer);
-        this.blocks.add(newBlock);
-
-        var delayMs = this.config.msBetweenBlocks(elapsedMs);
-
-        that.time.events.add(delayMs, that.addBlock, that);
-    };
 
     this.stage.backgroundColor = '#fff';
 
@@ -269,7 +275,7 @@ Tetra.Game.prototype.render = function () {
     }
 };
 
-Tetra.Game.defaultPlayer = function() {
+Tetra.Game.defaultPlayer = function () {
     return {
         data: {
             name: getPlayerName(),
