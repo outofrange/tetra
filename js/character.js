@@ -95,7 +95,7 @@ Tetra.Character.prototype.Direction = {
  */
 Tetra.Character.prototype.updateLook = function () {
     // get the positive angle between body and mouse from 0 to 180 degrees, where 0 is top and 180 is at the bottom
-    var pointerAngle = (this.position.angle(worldPosWrapper(this.game.input), true) + 360 + 90) % 360;
+    var pointerAngle = (this.position.angle(wrapWorldPosition(this.game.input), true) + 360 + 90) % 360;
     if (pointerAngle > 180) {
         pointerAngle = 360 - pointerAngle;
     }

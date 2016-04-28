@@ -4,6 +4,8 @@ Tetra.Field = function (x, y, width, height, tileSize) {
     this.width = width;
     this.height = height;
     this.tileSize = tileSize;
+    
+    this.tileRectangle = new Phaser.Rectangle(x, y, width, height);
 
     var fieldArray = Tetra.Util.initArray(height, width);
     var that = this;

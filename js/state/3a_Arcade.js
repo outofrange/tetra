@@ -1,25 +1,14 @@
 Tetra.arcade = function () {
     var debug = false;
 
-    var character = null;
-    var map = null;
-    var layer = null;
-
-    var levelInfo = {
-        tileWidth: 32,
-        blockArea: {
-            tiles: new Phaser.Rectangle(8, 0, 10, 39)
-        }
-    };
-    levelInfo.blockArea.coord = (function () {
-        var r = levelInfo.blockArea.tiles;
-        var w = levelInfo.tileWidth;
-        new Phaser.Rectangle(r.x * w, r.y * w, r.width * w, r.height * w);
-    })();
-
-    var GOAL_AREA;
-
-    var playingField;
+    // "environment"
+    var map, layer, field, music;
+    
+    // groups & sprites & text
+    var character, bullets, blocks, GOAL_AREA, text;
+    
+    // methods
+    var addBlock;
 
     var blockGapMaxMs = 4000;
     var blockGapMinMs = 250;
@@ -51,8 +40,6 @@ Tetra.arcade = function () {
         return speed;
     };
 
-    var addBlock, blocks, bullets, text, music;
-
     this.gameover = function () {
         music.stop();
         this.state.start('Highscore', true, false, !debug ? Tetra.Player.arcade.points : 0);
@@ -65,7 +52,7 @@ Tetra.arcade = function () {
         bullet.checkWorldBounds = true;
         bullet.outOfBoundsKill = true;
 
-        var angle = character.position.angle(worldPosWrapper(this.input), true);
+        var angle = character.position.angle(wrapWorldPosition(this.input), true);
         this.physics.arcade.velocityFromAngle(angle, 1500, bullet.body.velocity);
     }, 200, {trailing: false});
 
@@ -77,7 +64,7 @@ Tetra.arcade = function () {
         console.log('Creating Arcade level');
         console.log('Name: ' + Tetra.Player.name);
         
-        playingField = new Tetra.Field(8, 0, 10, 39, 32);
+        field = new Tetra.Field(8, 0, 10, 39, 32);
 
         music = that.sound.add('ozzed_fighter', 1, true);
         music.loop = true;
@@ -87,7 +74,7 @@ Tetra.arcade = function () {
 
         addBlock = function () {
             var elapsedMs = that.time.events.ms;
-            var newBlock = new Tetra.Block(this, blocks, levelInfo.blockArea.tiles, calcFallingSpeed(elapsedMs), layer);
+            var newBlock = new Tetra.Block(this, blocks, field.tileRectangle, calcFallingSpeed(elapsedMs), layer);
             blocks.add(newBlock);
 
             var delayMs = calcBlockGap(elapsedMs);
@@ -101,14 +88,14 @@ Tetra.arcade = function () {
         map.addTilesetImage('kachel', 'tiles');
         layer = map.createLayer('Layer 1');
         layer.resizeWorld();
-        map.setCollision([0, 1]);
+        map.setCollision(1);
 
 
         this.physics.startSystem(Phaser.Physics.ARCADE);
         this.physics.arcade.gravity.y = 1500;
         this.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP;
 
-        character = new Tetra.Character(this, 2 * levelInfo.tileWidth, this.world.height - 5 * levelInfo.tileWidth);
+        character = new Tetra.Character(this, 2 * field.tileSize, this.world.height - 5 * field.tileSize);
         this.add.existing(character);
 
         this.time.events.add(blockGapMaxMs, addBlock, this);
@@ -122,9 +109,9 @@ Tetra.arcade = function () {
         var margin = 10;
         var graphics = this.add.graphics(0, 0);
         graphics.fixedToCamera = true;
-        graphics.cameraOffset = new Phaser.Point(margin, margin + levelInfo.tileWidth);
+        graphics.cameraOffset = new Phaser.Point(margin, margin + field.tileSize);
         graphics.beginFill(0xA1A1A1, 0.8);
-        graphics.drawRoundedRect(0, 0, 8 * levelInfo.tileWidth - 2 * margin, 5 * levelInfo.tileWidth - 2 * margin, 5);
+        graphics.drawRoundedRect(0, 0, 8 * field.tileSize - 2 * margin, 5 * field.tileSize - 2 * margin, 5);
 
         text = this.add.text(0, 0, pointsText(), Tetra.style.text.gui);
         text.fixedToCamera = true;
@@ -133,9 +120,9 @@ Tetra.arcade = function () {
         this.camera.follow(character);
         this.camera.deadzone = new Phaser.Rectangle(0, 800 - (32 * 6), 800, 32);
 
-        GOAL_AREA = this.add.sprite(18 * levelInfo.tileWidth, levelInfo.tileWidth, null);
+        GOAL_AREA = this.add.sprite(18 * field.tileSize, field.tileSize, null);
         this.physics.enable(GOAL_AREA, Phaser.Physics.ARCADE);
-        GOAL_AREA.body.setSize(6 * levelInfo.tileWidth, 6 * levelInfo.tileWidth);
+        GOAL_AREA.body.setSize(6 * field.tileSize, 6 * field.tileSize);
         GOAL_AREA.body.allowGravity = false;
     };
 
@@ -146,7 +133,7 @@ Tetra.arcade = function () {
             Tetra.Player.arcade.points += block.totalParts() * 100;
             
             // adding all block parts to field
-            var removedRows = playingField.add(block.children);
+            var removedRows = field.add(block.children);
             Tetra.Player.arcade.points += removedRows * 5000;
         }
     };
@@ -185,7 +172,7 @@ Tetra.arcade = function () {
             that.physics.arcade.collide(bullets, block, function (bullet, blockPart) {
                 bullet.kill();
 
-                playingField.remove(blockPart);
+                field.remove(blockPart);
 
                 if (blockPart.body.velocity.y === 0) {
                     Tetra.Player.arcade.points -= 200;
@@ -210,7 +197,7 @@ Tetra.arcade = function () {
 
         this.physics.arcade.overlap(GOAL_AREA, character, function () {
             console.log('Goal!');
-            Tetra.Player.arcade.points += 1000000;
+            Tetra.Player.arcade.points += 100000;
             that.gameover();
         });
 
