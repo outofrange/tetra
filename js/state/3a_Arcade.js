@@ -2,7 +2,7 @@ Tetra.Arcade = function () {
     var field = new Tetra.Field(8, 0, 10, 39, 'map_xl');
     var config = new Tetra.Game.DefaultConfig();
 
-    Tetra.Game.call(this, field, _.extend({}, Tetra.Game.Player), config);
+    Tetra.Game.call(this, field, Tetra.Game.defaultPlayer(), config);
 
     this.nextScreen = function () {
         this.state.start('Highscore', true, false, !this.debug ? this.player.points : 0);

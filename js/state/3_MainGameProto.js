@@ -92,7 +92,8 @@ Tetra.Game.prototype.create = function () {
     var that = this;
 
     console.log('Creating level');
-    console.log('Name: ' + this.player.data.name);
+    console.log('Player: ');
+    console.log(this.player);
 
     this.music = this.sound.add('ozzed_fighter', 1, true);
     this.music.loop = true;
@@ -260,15 +261,17 @@ Tetra.Game.prototype.render = function () {
     }
 };
 
-Tetra.Game.Player = {
-    data: {
-        name: getPlayerName(),
-        _points: 0
-    },
-    set points(value) {
-        this.data._points = value >= 0 ? value : 0;
-    },
-    get points() {
-        return this.data._points;
+Tetra.Game.defaultPlayer = function() {
+    return {
+        data: {
+            name: getPlayerName(),
+            points: 0
+        },
+        set points(value) {
+            this.data.points = value >= 0 ? value : 0;
+        },
+        get points() {
+            return this.data.points;
+        }
     }
 };

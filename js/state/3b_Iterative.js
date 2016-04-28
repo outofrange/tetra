@@ -1,5 +1,5 @@
 Tetra.Iterative = function () {
-    var field = new Tetra.Field(8, 0, 10, 20, 'map');
+    var field = new Tetra.Field(8, 0, 10, 21, 'map');
     var config = new Tetra.Game.DefaultConfig();
     config.goal = new Phaser.Rectangle(18 * field.tileSize, field.tileSize, 6 * field.tileSize, 4 * field.tileSize);
 
@@ -14,16 +14,24 @@ Tetra.Iterative = function () {
 Tetra.Iterative.prototype = Object.create(Tetra.Game.prototype);
 Tetra.Iterative.prototype.constructor = Tetra.Game;
 
-var playerTemp = {};
-_.extend(playerTemp, Tetra.Game.Player);
+var iterativeDefaultData = {
+    upgrades: {
+        shooting: 0,
+        running: 0,
+        jumping: 0
+    },
+    points: 0
+};
 
 Tetra.Iterative.getPlayer = function () {
     var playerData = localStorage.getItem('iterative.player.data');
-    var player = _.extend({}, playerTemp);
-    
+    var player = Tetra.Game.defaultPlayer();
+
     if (playerData) {
         player.data = JSON.parse(playerData);
+    } else {
+        player.data = iterativeDefaultData;
     }
-    
+
     return player;
 };
