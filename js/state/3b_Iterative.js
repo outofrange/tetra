@@ -15,12 +15,12 @@ Tetra.Iterative.prototype.create = function () {
 };
 
 Tetra.Iterative.Player = {
-    name: pick(localStorage.getItem('playerName'), 'anonymous'),
+    name: getPlayerName(),
     _points: 0,
     set points(value) {
-        Tetra.Player.arcade._points = value >= 0 ? value : 0;
+        Tetra.Iterative.Player._points = value >= 0 ? value : 0;
     },
     get points() {
-        return Tetra.Player.arcade._points;
+        return Tetra.Iterative.Player._points;
     }
 };

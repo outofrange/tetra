@@ -24,6 +24,15 @@ var wrapWorldPosition = function (obj) {
     }
 };
 
+var getPlayerName = function () {
+    var name = localStorage.getItem('playerName');
+    if (name && name != '') {
+        return name;
+    } else {
+        return 'anonymous';
+    }
+};
+
 Phaser.Key.prototype.toString = function () {
     return this.keyCode.toString();
 };
@@ -42,31 +51,6 @@ Tetra.style = {
         button: {font: '24px Arial', fill: '#000', boundsAlignH: 'center', boundsAlignV: 'middle'}
     }
 };
-
-Tetra.Player = {
-    name: pick(localStorage.getItem('playerName'), 'anonymous'),
-    arcade: {
-        _points: 0,
-        set points(value) {
-            Tetra.Player.arcade._points = value >= 0 ? value : 0;
-        },
-        get points() {
-            return Tetra.Player.arcade._points;
-        }
-    }
-};
-
-/*Tetra.Arcade.Player = {
-    name: pick(localStorage.getItem('playerName'), 'anonymous'),
-    _points: 0,
-    set points(value) {
-        Tetra.Player.arcade._points = value >= 0 ? value : 0;
-    },
-    get points() {
-        return Tetra.Player.arcade._points;
-    }
-};*/
-
 
 Tetra.Util = {};
 

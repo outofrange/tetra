@@ -2,7 +2,7 @@ Tetra.Game = function (field, player, worldConfig) {
     this.debug = false;
     this.field = field;
     this.player = player;
-    
+
     this.config = pick(worldConfig, new Tetra.Game.DefaultConfig());
 
     this.map = null;
@@ -16,6 +16,8 @@ Tetra.Game = function (field, player, worldConfig) {
     this.text = null;
 
     this.addBlock = null;
+
+    this.nextScreen = null;
 };
 Tetra.Game.prototype = Object.create(Phaser.State.prototype);
 Tetra.Game.prototype.constructor = Tetra.Game;
@@ -72,7 +74,7 @@ Tetra.Game.prototype.pointsText = function () {
 
 Tetra.Game.prototype.gameOver = function () {
     this.music.stop();
-    this.state.start('Highscore', true, false, !this.debug ? this.player.points : 0);
+    this.nextScreen();
 };
 
 Tetra.Game.prototype.shoot = _.throttle(function () {

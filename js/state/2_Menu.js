@@ -14,7 +14,7 @@ Tetra.menu = function () {
         arcadeModeBtn.y = margin;
 
         arcadeModeBtn.setOnClick(function () {
-            Tetra.Player.name = getNameAndHide();
+            saveNameAndHide();
 
             this.state.start('Arcade');
         }, this);
@@ -26,7 +26,7 @@ Tetra.menu = function () {
         incrementalModeBtn.y = this.world.height - incrementalModeBtn.height - margin;
 
         incrementalModeBtn.setOnClick(function () {
-            Tetra.Player.name = getNameAndHide();
+            saveNameAndHide();
 
             this.state.start('Iterative');
         }, this);
@@ -53,18 +53,18 @@ Tetra.menu = function () {
             "Idea: search for 'tetris vs. contra' on YouTube\n" +
             "Music: ozzed.net has some pretty nice tracks!";
 
-        var normal = this.add.text(0,0, description, Tetra.style.text.normal);
+        var normal = this.add.text(0, 0, description, Tetra.style.text.normal);
         normal.setTextBounds(margin, arcadeModeBtn.bottom + margin, this.world.width - 2 * margin,
             incrementalModeBtn.top - arcadeModeBtn.bottom - margin);
     };
 
     var showNameInput = function () {
         var field = document.getElementById('playerName');
-        field.value = Tetra.Player.name;
+        field.value = getPlayerName();
         field.removeAttribute('class');
     };
 
-    var getNameAndHide = function () {
+    var saveNameAndHide = function () {
         var field = document.getElementById('playerName');
         var value = field.value;
         field.setAttribute('class', 'hidden');

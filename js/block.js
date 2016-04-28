@@ -4,7 +4,7 @@ Tetra.Block = function (game, parent, tileRectangle, fallingVelocity) {
 
     var width = formation[0].length;
     var height = formation.length;
-    
+
     var x = (function () {
         // calculate tiles from 0 to n, where it's possible to place the block
         var range = tileRectangle.width - width + 1;

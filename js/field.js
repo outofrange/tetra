@@ -14,20 +14,20 @@ Tetra.Field = function (x, y, width, height, tilemapKey, tileSize) {
         fieldArray[rowIndex].forEach(function (sprite) {
             sprite.destroy();
         });
-        
+
         for (var i = rowIndex; i > 0; i--) {
             that.getElementsInRow(i).forEach(function (sprite) {
                 sprite.y += tileSize;
             });
 
-            fieldArray[i] = fieldArray[i-1];
+            fieldArray[i] = fieldArray[i - 1];
         }
         fieldArray[0] = Tetra.Util.initArray(that.width);
     };
-    
+
     var checkRows = function (rows) {
         rows.sort();
-        
+
         var removedRows = 0;
 
         for (var i = 0; i < rows.length; i++) {
@@ -39,7 +39,7 @@ Tetra.Field = function (x, y, width, height, tilemapKey, tileSize) {
                 removedRows++;
             }
         }
-        
+
         return removedRows;
     };
 
@@ -65,7 +65,7 @@ Tetra.Field = function (x, y, width, height, tilemapKey, tileSize) {
         var removedRows = checkRows(_.sortedUniq(affectedRows));
         return removedRows;
     };
-    
+
     this.remove = function (e) {
         var top = e.y;
         var bottom = top + e.height;

@@ -3,6 +3,10 @@ Tetra.Arcade = function () {
     var config = new Tetra.Game.DefaultConfig();
 
     Tetra.Game.call(this, field, Tetra.Arcade.Player, config);
+
+    this.nextScreen = function () {
+        this.state.start('Highscore', true, false, !this.debug ? this.player.points : 0);
+    };
 };
 
 
@@ -10,12 +14,12 @@ Tetra.Arcade.prototype = Object.create(Tetra.Game.prototype);
 Tetra.Arcade.prototype.constructor = Tetra.Game;
 
 Tetra.Arcade.Player = {
-    name: pick(localStorage.getItem('playerName'), 'anonymous'),
+    name: getPlayerName(),
     _points: 0,
     set points(value) {
-        Tetra.Player.arcade._points = value >= 0 ? value : 0;
+        Tetra.Arcade.Player._points = value >= 0 ? value : 0;
     },
     get points() {
-        return Tetra.Player.arcade._points;
+        return Tetra.Arcade.Player._points;
     }
 };

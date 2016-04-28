@@ -14,8 +14,8 @@ Tetra.preload = function () {
         // load sprites
         this.load.atlasJSONHash('sprites', 'assets/sprite/tetrasprites.png', 'assets/sprite/tetrasprites.json');
         this.load.spritesheet('explosion_box', 'assets/sprite/explosionbox.png', 32, 32);
-        this.load.spritesheet('explosion_big', 'assets/sprite/explosiontetra.png',  70, 64);
-        
+        this.load.spritesheet('explosion_big', 'assets/sprite/explosiontetra.png', 70, 64);
+
         this.load.audio('ozzed_fighter', "assets/music/ozzed/fighter.mp3");
     };
 
