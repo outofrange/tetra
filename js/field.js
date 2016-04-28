@@ -16,8 +16,9 @@ Tetra.Field = function (x, y, width, height, tilemapKey, tileSize) {
         });
 
         for (var i = rowIndex; i > 0; i--) {
-            that.getElementsInRow(i).forEach(function (sprite) {
-                sprite.y += tileSize;
+            that.getElementsInRow(i - 1).forEach(function (sprite) {
+                // move sprite down
+                sprite.y += that.tileSize;
             });
 
             fieldArray[i] = fieldArray[i - 1];

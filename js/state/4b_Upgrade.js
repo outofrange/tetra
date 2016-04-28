@@ -61,6 +61,9 @@ Tetra.Upgrade = function () {
                 player.data.upgrades.running++;
             }
         });
+
+        var soon = this.add.text(margin, 0, 'Coming soon: hats, for real money!', Tetra.style.text.normal);
+        soon.y = this.game.height - soon.height - margin;
     };
 
     this.costFunction = function (currentVal) {
@@ -94,7 +97,6 @@ Tetra.Upgrade = function () {
 
         var price = this.add.text(btn.right + margin, y, '', Tetra.style.text.normal);
         price.update = function () {
-            this.visible = enoughCredits();
             this.text = '(Costs ' + that.costFunction(paramGetter()) + ')';
         };
 
