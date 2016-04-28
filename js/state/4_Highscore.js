@@ -1,5 +1,8 @@
 Tetra.highscore = function () {
+    var that = this;
     var currentScore;
+
+    var highscoreBaseUrl = 'https://outofrange.org/games';
 
     var style = Tetra.style.text.highscore;
     var rowHeight = 32;
@@ -50,15 +53,6 @@ Tetra.highscore = function () {
         localStorage.setItem('tetra.highscore', JSON.stringify(saving));
     };
 
-    var getGlobalHighscore = function () {
-        return [];
-    };
-
-    var getDummyHighscore = function () {
-        return [{name: 'heinz', score: 200}, {name: 'heinz', score: 200}, {name: 'heinz', score: 300}];
-    };
-
-
     var processHighscore = function (name, score, loadHighscore, saveHighscore, show) {
         show = pick(show, 5);
 
@@ -74,14 +68,37 @@ Tetra.highscore = function () {
         return showedHighscore;
     };
 
+    var sendToGlobalHighscore = function (newEntry) {
+        qwest.post(highscoreBaseUrl + '/highscore/send.php', newEntry)
+            .then(function() {
+                console.log('Sent successfully');
+            })
+            .catch(function(e, xhr, response) {
+                console.log('Couldn\'t send highscore!');
+                console.log(response);
+            });
+    };
+
+    var requestGlobalHighscore = function () {
+        qwest.get(highscoreBaseUrl + '/highscore/get.php')
+            .then(function(xhr, response) {
+                console.log('Received response:');
+                console.log(response);
+                var highscore = processHighscore('You', currentScore, function () {
+                    return JSON.parse(response);
+                }, sendToGlobalHighscore, 6);
+
+                that.createTable(10, 10, this.game.width - 10, highscore, 'Global highscore');
+            });
+    };
+
     this.create = function () {
         this.world.setBounds(0, 0, 800, 800);
         this.stage.backgroundColor = '#000';
 
-        var dummy = processHighscore('Me', currentScore, getDummyHighscore, null, 6);
-        var local = processHighscore('You', currentScore, getLocalHighscore, _.flip(saveLocalHighscore), 4);
+        requestGlobalHighscore()
 
-        this.createTable(10, 10, this.game.width - 10, dummy, 'Global highscore');
+        var local = processHighscore('You', currentScore, getLocalHighscore, _.flip(saveLocalHighscore), 4);
         this.createTable(10, this.game.height / 2 + 10, this.game.width - 10, local, 'Local highscore');
 
         var playAgainBtn = new Tetra.Button(this, 0, 0, 250, 75, 'Play again');
@@ -93,7 +110,6 @@ Tetra.highscore = function () {
         }, this);
         this.add.existing(playAgainBtn);
     };
-
 };
 
 
