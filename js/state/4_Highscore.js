@@ -85,7 +85,7 @@ Tetra.highscore = function () {
                 console.log('Received response:');
                 console.log(response);
 
-                var highscore = processHighscore('You', currentScore, function () {
+                var highscore = processHighscore(Tetra.Player.name, currentScore, function () {
                     console.log(JSON.parse(response));
                     return JSON.parse(response);
                 }, sendToGlobalHighscore, 6);
@@ -100,7 +100,7 @@ Tetra.highscore = function () {
 
         requestGlobalHighscore();
 
-        var local = processHighscore('You', currentScore, getLocalHighscore, _.flip(saveLocalHighscore), 4);
+        var local = processHighscore(Tetra.Player.name, currentScore, getLocalHighscore, _.flip(saveLocalHighscore), 4);
         this.createTable(10, this.game.height / 2 + 10, this.game.width - 10, local, 'Local highscore');
 
         var playAgainBtn = new Tetra.Button(this, 0, 0, 250, 75, 'Play again');
@@ -111,6 +111,15 @@ Tetra.highscore = function () {
             this.state.start('Arcade');
         }, this);
         this.add.existing(playAgainBtn);
+        
+        var menuBtn = new Tetra.Button(this, 0, 0, 200, 75, 'Menu');
+        menuBtn.x = this.world.width / 2 - menuBtn.width / 2;
+        menuBtn.y = playAgainBtn.top - menuBtn.height - margin;
+
+        menuBtn.setOnClick(function () {
+            this.state.start('Menu');
+        }, this);
+        this.add.existing(menuBtn);
     };
 };
 

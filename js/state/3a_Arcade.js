@@ -77,6 +77,7 @@ Tetra.arcade = function () {
         points = 0;
 
         console.log('Creating Arcade level');
+        console.log('Name: ' + Tetra.Player.name);
         
         playingField = new Tetra.Field(8, 0, 10, 39, 32);
 
@@ -131,8 +132,8 @@ Tetra.arcade = function () {
         text.fixedToCamera = true;
         text.cameraOffset = graphics.cameraOffset.clone().add(margin, margin);
 
-        //this.camera.setBoundsToWorld();
         this.camera.follow(character);
+        this.camera.deadzone = new Phaser.Rectangle(0, 800 - (32 * 6), 800, 32);
 
         GOAL_AREA = this.add.sprite(18 * levelInfo.tileWidth, levelInfo.tileWidth, null);
         this.physics.enable(GOAL_AREA, Phaser.Physics.ARCADE);
@@ -225,7 +226,7 @@ Tetra.arcade = function () {
 
             blocks.forEachAlive(function (block) {
                 block.debug();
-            })
+            });
         }
     };
 };
