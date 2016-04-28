@@ -71,9 +71,11 @@ Tetra.Block.prototype.stop = function () {
     });
 };
 
-Tetra.Block.prototype.debug = function () {
+Tetra.Block.prototype.debugBlock = function () {
+    var that = this;
     this.children.forEach(function (child) {
-        g.debug.body(child);
+        // yes. it looks a bit weird.
+        that.game.game.debug.body(child);
     });
 };
 

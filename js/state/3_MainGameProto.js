@@ -1,5 +1,5 @@
 Tetra.Game = function (field, player, worldConfig) {
-    this.debug = false;
+    this.debugMode = false;
     this.field = field;
     this.player = player;
 
@@ -229,12 +229,12 @@ Tetra.Game.prototype.update = function () {
 
     // debug keys
     if (this.input.keyboard.isDown(Phaser.Keyboard.COMMA)) {
-        this.debug = true;
+        this.debugMode = true;
     } else if (this.input.keyboard.isDown(Phaser.Keyboard.PERIOD)) {
-        this.debug = false;
+        this.debugMode = false;
         this.player.points = 0;
     }
-    if (this.debug) {
+    if (this.debugMode) {
         if (this.input.keyboard.isDown(Phaser.Keyboard.M)) {
             this.gameOver();
         } else if (this.input.keyboard.isDown(Phaser.Keyboard.L)) {
@@ -248,14 +248,27 @@ Tetra.Game.prototype.update = function () {
 };
 
 Tetra.Game.prototype.render = function () {
-    if (this.debug) {
+    if (this.debugMode) {
         this.game.debug.bodyInfo(this.character, 32, 32);
         this.game.debug.bodyInfo(this.goalArea, 32, 128);
         this.game.debug.body(this.character);
         this.game.debug.body(this.goalArea);
 
         this.blocks.forEachAlive(function (block) {
-            block.debug();
+            block.debugBlock();
         });
+    }
+};
+
+Tetra.Game.Player = {
+    data: {
+        name: getPlayerName(),
+        _points: 0
+    },
+    set points(value) {
+        this.data._points = value >= 0 ? value : 0;
+    },
+    get points() {
+        return this.data._points;
     }
 };

@@ -14,26 +14,16 @@ Tetra.Iterative = function () {
 Tetra.Iterative.prototype = Object.create(Tetra.Game.prototype);
 Tetra.Iterative.prototype.constructor = Tetra.Game;
 
+var playerTemp = {};
+_.extend(playerTemp, Tetra.Game.Player);
+
 Tetra.Iterative.getPlayer = function () {
     var playerData = localStorage.getItem('iterative.player.data');
-    var player = new Tetra.Iterative.Player();
+    var player = _.extend({}, playerTemp);
     
     if (playerData) {
         player.data = JSON.parse(playerData);
     }
     
     return player;
-};
-
-Tetra.Iterative.Player = {
-    data: {
-        name: getPlayerName(),
-        _points: 0
-    },    
-    set points(value) {
-        this._points = value >= 0 ? value : 0;
-    },
-    get points() {
-        return this._points;
-    }
 };
