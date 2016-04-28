@@ -65,7 +65,15 @@ Tetra.Game.DefaultConfig = function () {
         return speed;
     };
 
-    this.shootingSpeed = 1500;
+    this.shootingSpeed = function () {
+        return 1500;
+    };
+    this.runningSpeed = function () {
+        return 500;
+    };
+    this.jumpingSpeed = function () {
+        return 3;
+    };
 };
 
 Tetra.Game.prototype.pointsText = function () {
@@ -85,7 +93,7 @@ Tetra.Game.prototype.shoot = _.throttle(function () {
     bullet.outOfBoundsKill = true;
 
     var angle = this.character.position.angle(wrapWorldPosition(this.input), true);
-    this.physics.arcade.velocityFromAngle(angle, this.config.shootingSpeed, bullet.body.velocity);
+    this.physics.arcade.velocityFromAngle(angle, this.config.shootingSpeed(), bullet.body.velocity);
 }, 200, {trailing: false});
 
 Tetra.Game.prototype.create = function () {
@@ -126,7 +134,7 @@ Tetra.Game.prototype.create = function () {
     this.physics.arcade.gravity.y = 1500;
     this.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP;
 
-    this.character = new Tetra.Character(this, 2 * this.field.tileSize, this.world.height - 5 * this.field.tileSize);
+    this.character = new Tetra.Character(this, 2 * this.field.tileSize, this.world.height - 5 * this.field.tileSize, this.config);
     this.add.existing(this.character);
 
     this.time.events.add(this.config.blockGapMaxMs, this.addBlock, this);
@@ -234,11 +242,11 @@ Tetra.Game.prototype.update = function () {
     } else if (this.input.keyboard.isDown(Phaser.Keyboard.PERIOD)) {
         this.debugMode = false;
         this.player.points = 0;
+    } else if (this.input.keyboard.isDown(Phaser.Keyboard.M)) {
+        this.gameOver();
     }
     if (this.debugMode) {
-        if (this.input.keyboard.isDown(Phaser.Keyboard.M)) {
-            this.gameOver();
-        } else if (this.input.keyboard.isDown(Phaser.Keyboard.L)) {
+        if (this.input.keyboard.isDown(Phaser.Keyboard.L)) {
             // to the goal!
             this.character.x = 700;
             this.character.y = 100;

@@ -1,8 +1,11 @@
-Tetra.Character = function (game, x, y) {
+Tetra.Character = function (game, x, y, config) {
+    var that = this;
+    this.config = config;
+    
     this.Defaults = new function () {
-        this.MAX_VELOCITY = 500;
+        this.MAX_VELOCITY = that.config.runningSpeed();
         this.MAX_VELOCITY_BACKWARDS = this.MAX_VELOCITY * 0.35;
-        this.JUMP_VELOCITY = game.physics.arcade.gravity.y / 3;
+        this.JUMP_VELOCITY = game.physics.arcade.gravity.y / that.config.jumpingSpeed();
         this.ACCELERATION = this.MAX_VELOCITY * 3;
         this.DRAG = this.MAX_VELOCITY * 2;
         this.SPRITE_HEIGHT = 128;
@@ -46,14 +49,9 @@ Tetra.Character = function (game, x, y) {
         var segment;
         if (degrees == 180) {
             // we have to process 180 separately, to be able to use the segment as an index
-            segment = bodyLookingSprites[bodyLookingSprites - 1];
+            segment = bodyLookingSprites[bodyLookingSprites.length - 1];
         } else {
             segment = Math.floor(degrees / 180 * 5);
-        }
-
-        if (bodyLookingSprites[segment] == undefined) {
-            console.log(degrees);
-            console.log(segment);
         }
 
         body.frameName = bodyLookingSprites[segment];

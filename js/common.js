@@ -137,3 +137,11 @@ Tetra.Util.initArray = function (rows, columns) {
 
     return arr;
 };
+
+var linearFunction = function (startingAt, endingAt, endingWith) {
+    var k = (endingAt - startingAt)/endingWith;
+    
+    return function (x) {
+        return k * x + startingAt;
+    };
+};

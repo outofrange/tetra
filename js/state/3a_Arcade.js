@@ -12,3 +12,9 @@ Tetra.Arcade = function () {
 
 Tetra.Arcade.prototype = Object.create(Tetra.Game.prototype);
 Tetra.Arcade.prototype.constructor = Tetra.Game;
+
+Tetra.Arcade.prototype.origCreate = Tetra.Arcade.prototype.create;
+Tetra.Arcade.prototype.create = function () {
+    this.origCreate();
+    this.player.points = 0;
+};

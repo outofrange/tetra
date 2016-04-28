@@ -23,6 +23,24 @@ Tetra.Upgrade = function () {
         }, this);
         this.add.existing(saveAndContinueBtn);
 
+        var menuBtn = new Tetra.Button(this, 0, 0, 200, 75, 'Menu');
+        menuBtn.x = saveAndContinueBtn.right - menuBtn.width;
+        menuBtn.y = saveAndContinueBtn.top - menuBtn.height - margin;
+
+        menuBtn.setOnClick(function () {
+            this.state.start('Menu');
+        }, this);
+        this.add.existing(menuBtn);
+
+        var resetBtn = new Tetra.Button(this, 0, 0, 150, 75, 'Reset');
+        resetBtn.x = menuBtn.right - resetBtn.width;
+        resetBtn.y = menuBtn.top - resetBtn.height - margin;
+
+        resetBtn.setOnClick(function () {
+            player.data = Tetra.Iterative.iterativeDefaultData;
+        }, this);
+        this.add.existing(resetBtn);
+
         var currentY = this.add.text(15, 15, 'Upgrade!', Tetra.style.text.heading).bottom;
         var totalCredits = this.add.text(15, currentY + margin, '', Tetra.style.text.normal);
         totalCredits.update = function () {
@@ -66,9 +84,7 @@ Tetra.Upgrade = function () {
         soon.y = this.game.height - soon.height - margin;
     };
 
-    this.costFunction = function (currentVal) {
-        return (100000 - 5000) / 10 * currentVal + 5000;
-    };
+    this.costFunction = linearFunction(1500, 50000, 10);
 
     this.save = function () {
         localStorage.setItem('iterative.player.data', JSON.stringify(player.data));
