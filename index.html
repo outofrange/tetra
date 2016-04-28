@@ -15,7 +15,8 @@
     <script src="js/state/3_MainGameProto.js"></script>
     <script src="js/state/3a_Arcade.js"></script>
     <script src="js/state/3b_Iterative.js"></script>
-    <script src="js/state/4_Highscore.js"></script>
+    <script src="js/state/4a_Highscore.js"></script>
+    <script src="js/state/4b_Upgrade.js"></script>
 
     <script src="js/field.js"></script>
     <script src="js/character.js"></script>
@@ -67,6 +68,7 @@
         g.state.add('Arcade', Tetra.Arcade);
         g.state.add('Iterative', Tetra.Iterative);
         g.state.add('Highscore', Tetra.highscore);
+        g.state.add('Upgrade', Tetra.Upgrade);
 
         g.state.start('Boot');
     }

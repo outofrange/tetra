@@ -3,6 +3,10 @@ Tetra.Iterative = function () {
     var config = new Tetra.Game.DefaultConfig();
 
     Tetra.Game.call(this, field, Tetra.Iterative.getPlayer(), config);
+
+    this.nextScreen = function () {
+        this.state.start('Upgrade', true, false, this.player);
+    };
 };
 
 
