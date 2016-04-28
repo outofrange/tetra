@@ -61,7 +61,6 @@ Tetra.Field = function (x, y, width, height, tileSize) {
 
 
         var removedRows = checkRows(_.sortedUniq(affectedRows));
-        console.log(fieldArray);
         return removedRows;
     };
     
