@@ -6,10 +6,6 @@ Tetra.boot = function () {
     };
 };
 
-Tetra.Player = {
-    name: pick(localStorage.getItem('playerName'), 'anonymous')
-};
-
 Tetra.style = {
     text: {
         heading: {font: 'bold 32px Arial', fill: '#fff', boundsAlignH: 'center', boundsAlignV: 'middle'},

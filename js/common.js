@@ -3,6 +3,20 @@ var pick = function (arg, def) {
 };
 
 Tetra = {};
+
+Tetra.Player = {
+    name: pick(localStorage.getItem('playerName'), 'anonymous'),
+    arcade: {
+        _points: 0,
+        set points (value) {
+            Tetra.Player.arcade._points = value >= 0 ? value : 0;
+        },
+        get points () {
+            return Tetra.Player.arcade._points;
+        }
+    }
+};
+
 Tetra.Util = {};
 
 Tetra.Util.rotate2dArray = function (array2D) {

@@ -34,9 +34,8 @@ Tetra.arcade = function () {
         return gapMs;
     };
 
-    var points = 0;
     var pointsText = function () {
-        return 'Points: ' + points;
+        return 'Points: ' + Tetra.Player.arcade.points;
     };
 
     var blockFallingSpeedMin = 100;
@@ -55,9 +54,8 @@ Tetra.arcade = function () {
     var addBlock, blocks, bullets, text, music;
 
     this.gameover = function () {
-        console.log('DEAD');
         music.stop();
-        this.state.start('Highscore', true, false, points);
+        this.state.start('Highscore', true, false, !debug ? Tetra.Player.arcade.points : 0);
     };
 
     var shoot = _.throttle(function () {
@@ -74,7 +72,7 @@ Tetra.arcade = function () {
     this.create = function () {
         var that = this;
 
-        points = 0;
+        Tetra.Player.arcade.points = 0;
 
         console.log('Creating Arcade level');
         console.log('Name: ' + Tetra.Player.name);
@@ -138,19 +136,24 @@ Tetra.arcade = function () {
         GOAL_AREA = this.add.sprite(18 * levelInfo.tileWidth, levelInfo.tileWidth, null);
         this.physics.enable(GOAL_AREA, Phaser.Physics.ARCADE);
         GOAL_AREA.body.setSize(6 * levelInfo.tileWidth, 6 * levelInfo.tileWidth);
+        GOAL_AREA.body.allowGravity = false;
     };
 
     var stopBlock = function (block) {
         // could be called multiple times for a single block formation
         if (block.falling) {
             block.stop();
-            points += block.totalParts() * 100;
+            Tetra.Player.arcade.points += block.totalParts() * 100;
             
             // adding all block parts to field
             var removedRows = playingField.add(block.children);
-            points += removedRows * 5000;
+            Tetra.Player.arcade.points += removedRows * 5000;
         }
     };
+
+    var toggleGravity = _.debounce(function (sprite) {
+        sprite.body.allowGravity = !sprite.body.allowGravity;
+    }, 50);
 
     this.update = function () {
         var that = this;
@@ -185,7 +188,7 @@ Tetra.arcade = function () {
                 playingField.remove(blockPart);
 
                 if (blockPart.body.velocity.y === 0) {
-                    points -= 200;
+                    Tetra.Player.arcade.points -= 200;
                 }
                 blockPart.destroy();
             });
@@ -207,22 +210,36 @@ Tetra.arcade = function () {
 
         this.physics.arcade.overlap(GOAL_AREA, character, function () {
             console.log('Goal!');
+            Tetra.Player.arcade.points += 1000000;
             that.gameover();
         });
 
+        // debug keys
         if (this.input.keyboard.isDown(Phaser.Keyboard.COMMA)) {
             debug = true;
         } else if (this.input.keyboard.isDown(Phaser.Keyboard.PERIOD)) {
             debug = false;
-        } else if (this.input.keyboard.isDown(Phaser.Keyboard.M)) {
-            this.gameover();
+            Tetra.Player.arcade.points = 0;
+        }
+        if (debug) {
+            if (this.input.keyboard.isDown(Phaser.Keyboard.M)) {
+                this.gameover();
+            } else if (this.input.keyboard.isDown(Phaser.Keyboard.L)) {
+                // to the goal!
+                character.x = 700;
+                character.y = 100;
+            } else if (this.input.keyboard.isDown(Phaser.Keyboard.O)) {
+                toggleGravity(character);
+            }
         }
     };
 
     this.render = function () {
         if (debug) {
             g.debug.bodyInfo(character, 32, 32);
+            g.debug.bodyInfo(GOAL_AREA, 32, 128);
             g.debug.body(character);
+            g.debug.body(GOAL_AREA);
 
             blocks.forEachAlive(function (block) {
                 block.debug();
