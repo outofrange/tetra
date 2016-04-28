@@ -60,7 +60,6 @@ Tetra.Block.prototype.stop = function () {
     this.falling = false;
     this.setAll('body.velocity.y', 0);
 
-    // TODO find out what's wrong.
     // that's what's annoying with making games. Even after aligning our blocks to the 32 grid manually,
     // they are still too low by >about< 3 pixels (about! Sometimes it's four...)
     // Before wasting hours finding some bug, I'm doing some magic.

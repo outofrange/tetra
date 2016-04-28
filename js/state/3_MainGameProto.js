@@ -120,48 +120,53 @@ Tetra.Game.prototype.create = function () {
     console.log('Player: ');
     console.log(this.player);
 
+    this.stage.backgroundColor = '#fff';
+
+    // creating music loop
     this.music = this.sound.add('ozzed_fighter', 1, true);
     this.music.loop = true;
     this.music.play();
-
-    this.blocks = this.add.group(this.world, 'blocks');
-
-
-    this.stage.backgroundColor = '#fff';
-
+    
+    // configuring map
     this.map = this.add.tilemap(this.field.tilemapKey);
     this.map.addTilesetImage('tile', 'tiles');
     this.layer = this.map.createLayer('Layer 1');
     this.layer.resizeWorld();
     this.map.setCollision(1);
-
-
+    
+    // basic physic settings
     this.physics.startSystem(Phaser.Physics.ARCADE);
     this.physics.arcade.gravity.y = 1500;
     this.physics.arcade.sortDirection = Phaser.Physics.Arcade.BOTTOM_TOP;
 
+    // create character at starting position in the lower left corner
     this.character = new Tetra.Character(this, 2 * this.field.tileSize, this.world.height - 5 * this.field.tileSize, this.config);
     this.add.existing(this.character);
 
+    // create block group and time block creation
+    this.blocks = this.add.group(this.world, 'blocks');
     this.time.events.add(this.config.blockGapMaxMs, this.addBlock, this);
 
+    // bullet object pool
     this.bullets = this.add.group(this.world, 'bullets', false, true, Phaser.Physics.ARCADE);
 
-    // GUI REF
+    // GUI for point display
     var margin = 10;
     var graphics = this.add.graphics(0, 0);
     graphics.fixedToCamera = true;
     graphics.cameraOffset = new Phaser.Point(margin, margin + this.field.tileSize);
     graphics.beginFill(0xA1A1A1, 0.8);
-    graphics.drawRoundedRect(0, 0, 8 * this.field.tileSize - 2 * margin, 5 * this.field.tileSize - 2 * margin, 5);
-
+    graphics.drawRoundedRect(0, 0, 8 * this.field.tileSize - 2 * margin, 2 * this.field.tileSize - 2 * margin, 5);
     this.text = this.add.text(0, 0, this.pointsText(), Tetra.style.text.gui);
     this.text.fixedToCamera = true;
     this.text.cameraOffset = graphics.cameraOffset.clone().add(margin, margin);
 
+    // configure camera with deadzone - otherwise, camera would only scroll up
+    // when player is quite far at the top of the screen
     this.camera.follow(this.character);
     this.camera.deadzone = new Phaser.Rectangle(0, 800 - (32 * 6), 800, 32);
 
+    // add goal area
     this.goalArea = this.add.sprite(this.config.goal.x, this.config.goal.y, null);
     this.physics.enable(this.goalArea, Phaser.Physics.ARCADE);
     this.goalArea.body.setSize(this.config.goal.width, this.config.goal.height);
@@ -180,6 +185,10 @@ Tetra.Game.prototype.stopBlock = function (block) {
     }
 };
 
+/**
+ * Toggles gravity for 'cheating'. Or debugging.
+ * @type {Function}
+ */
 Tetra.Game.prototype.toggleGravity = _.debounce(function (sprite) {
     sprite.body.allowGravity = !sprite.body.allowGravity;
 }, 50);
@@ -187,21 +196,23 @@ Tetra.Game.prototype.toggleGravity = _.debounce(function (sprite) {
 Tetra.Game.prototype.update = function () {
     var that = this;
 
-    // collision checks
+    // collision checks for blocks
     this.blocks.forEachAlive(function (block) {
+        // character is dead when block falls on his head...
         that.physics.arcade.collide(that.character, block, function (character) {
             if (block.falling && character.body.touching.up) {
                 character.kill();
-
                 that.gameOver();
             }
         });
-
+        
         if (block.falling) {
+            // falling blocks are stopped by the floor
             that.physics.arcade.collide(block, that.layer, function () {
                 that.stopBlock(block);
             });
 
+            // and by other, resting blocks
             that.blocks.forEachAlive(function (otherBlock) {
                 if (!otherBlock.falling && block !== otherBlock) {
                     that.physics.arcade.collide(block, otherBlock, function () {
@@ -211,11 +222,13 @@ Tetra.Game.prototype.update = function () {
             });
         }
 
+        // bullets can remove blocks...
         that.physics.arcade.collide(that.bullets, block, function (bullet, blockPart) {
             bullet.kill();
 
             that.field.remove(blockPart);
 
+            // ... but destroying resting blocks is penalized
             if (blockPart.body.velocity.y === 0) {
                 that.player.points += that.config.points.destroyedBlockPart;
             }
@@ -223,24 +236,27 @@ Tetra.Game.prototype.update = function () {
         });
     });
 
+    // obviously, the character is colliding with the layer
     this.physics.arcade.collide(this.character, this.layer);
 
+    // and bullets should be destroyed too. Except when they are too fast.
     this.physics.arcade.collide(this.bullets, this.layer, function (bullet) {
         bullet.kill();
     });
-
-
-    // shooting bullets
-    if (this.input.activePointer.leftButton.isDown) {
-        this.shoot();
-    }
-
-    this.text.text = this.pointsText();
 
     this.physics.arcade.overlap(this.goalArea, this.character, function () {
         that.player.points += that.config.points.goal;
         that.gameOver();
     });
+    
+    // --- MISC
+    this.text.text = this.pointsText();
+
+    // --- INPUT
+    // shooting bullets
+    if (this.input.activePointer.leftButton.isDown) {
+        this.shoot();
+    }
 
     // debug keys
     if (this.input.keyboard.isDown(Phaser.Keyboard.COMMA)) {
@@ -262,6 +278,9 @@ Tetra.Game.prototype.update = function () {
     }
 };
 
+/**
+ * Rendering some debug info when in debug mode.
+ */
 Tetra.Game.prototype.render = function () {
     if (this.debugMode) {
         this.game.debug.bodyInfo(this.character, 32, 32);
@@ -275,6 +294,9 @@ Tetra.Game.prototype.render = function () {
     }
 };
 
+/**
+ * Default player definition.
+ */
 Tetra.Game.defaultPlayer = function () {
     return {
         data: {
