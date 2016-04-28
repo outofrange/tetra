@@ -1,10 +1,10 @@
-Tetra.Field = function (x, y, width, height, tileSize) {
+Tetra.Field = function (x, y, width, height, tilemapKey, tileSize) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.tileSize = tileSize;
-    
+    this.tilemapKey = tilemapKey;
+    this.tileSize = pick(tileSize, 32);
     this.tileRectangle = new Phaser.Rectangle(x, y, width, height);
 
     var fieldArray = Tetra.Util.initArray(height, width);

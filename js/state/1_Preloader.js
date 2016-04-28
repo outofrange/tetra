@@ -9,7 +9,7 @@ Tetra.preload = function () {
         // load tiles & map
         this.load.tilemap('map', 'assets/tile/map.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('map_xl', 'assets/tile/map_xl.json', null, Phaser.Tilemap.TILED_JSON);
-        this.load.image('tiles', 'assets/tile/kachel.png');
+        this.load.image('tiles', 'assets/tile/tile.png');
 
         // load sprites
         this.load.atlasJSONHash('sprites', 'assets/sprite/tetrasprites.png', 'assets/sprite/tetrasprites.json');

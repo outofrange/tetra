@@ -19,11 +19,11 @@
         {
          "columns":1,
          "firstgid":1,
-         "image":"kachel.png",
+         "image":"tile.png",
          "imageheight":32,
          "imagewidth":32,
          "margin":0,
-         "name":"kachel",
+         "name":"tile",
          "spacing":0,
          "tilecount":1,
          "tileheight":32,

@@ -1,12 +1,18 @@
-Tetra.Iterative = function (game) {
-    var field = new Tetra.Field(8, 0, 10, 39, 32);
+Tetra.Iterative = function () {
+    var field = new Tetra.Field(8, 0, 10, 39, 'map');
 
-    Tetra.MainGame.call(this, field, Tetra.Iterative.Player);
+    Tetra.Game.call(this, field, Tetra.Iterative.Player);
 };
 
 
-Tetra.Iterative.prototype = Object.create(Tetra.MainGame.prototype);
-Tetra.Iterative.prototype.constructor = Tetra.MainGame;
+Tetra.Iterative.prototype = Object.create(Tetra.Game.prototype);
+Tetra.Iterative.prototype.constructor = Tetra.Game;
+
+Tetra.Iterative.prototype._create = Tetra.Iterative.prototype.create;
+Tetra.Iterative.prototype.create = function () {
+    this._create();
+    console.log("lolz");
+};
 
 Tetra.Iterative.Player = {
     name: pick(localStorage.getItem('playerName'), 'anonymous'),
