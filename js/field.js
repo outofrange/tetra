@@ -11,7 +11,7 @@ Tetra.Field = function (x, y, width, height, tilemapKey, tileSize) {
     var that = this;
 
     /**
-     * Removes a single row by destroyng all associated sprites and moving everything one row down
+     * Removes a single row by destroying all associated sprites and moving everything one row down
      * @param rowIndex the row to destroy
      */
     var removeRow = function (rowIndex) {
