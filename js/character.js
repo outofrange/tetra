@@ -49,7 +49,7 @@ Tetra.Character = function (game, x, y, config) {
         var segment;
         if (degrees == 180) {
             // we have to process 180 separately, to be able to use the segment as an index
-            segment = bodyLookingSprites[bodyLookingSprites.length - 1];
+            segment = bodyLookingSprites.length - 1;
         } else {
             segment = Math.floor(degrees / 180 * 5);
         }
